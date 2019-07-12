@@ -27,7 +27,7 @@ public class HumanResourceDAOImpl implements HumanResourceDAO {
 	private SqlSession sqlSession;
 
 	@Override
-	public void insertHumanResource(HumanResourceCard humanResourceCard) throws Exception {
+	public void insertHumanResourceCard(HumanResourceCard humanResourceCard) throws Exception {
 		sqlSession.insert("HumanResourceCardMapper.insertHumanResourceCard", humanResourceCard);
 	}
 
@@ -38,7 +38,7 @@ public class HumanResourceDAOImpl implements HumanResourceDAO {
 	}
 
 	@Override
-	public HumanResourceCard selectHumanResourceCardDetailByEmployeeNo(int employeeNo) throws Exception {
+	public HumanResourceCard selectHumanResourceCardDetailByEmployeeNo(String employeeNo) throws Exception {
 		
 		return sqlSession.selectOne
 				("HumanResourceCardMapper.selectHumanResourceCardDetailByEmployeeNo"
@@ -46,7 +46,7 @@ public class HumanResourceDAOImpl implements HumanResourceDAO {
 	}
 
 	@Override
-	public SimpleHumanResourceCard selectSimpleHumanResourceCardByEmployeeNo(int employeeNo) throws Exception {
+	public SimpleHumanResourceCard selectSimpleHumanResourceCardByEmployeeNo(String employeeNo) throws Exception {
 		
 		return sqlSession.selectOne
 				("HumanResourceCardMapper.selectSimpleHumanResourceCardByEmployeeNo"
@@ -86,7 +86,7 @@ public class HumanResourceDAOImpl implements HumanResourceDAO {
 	}
 
 	@Override
-	public void updateWorkAttitudeUsageStatus(int workAttitudeNo, String usageStatus) throws Exception {
+	public void updateWorkAttitudeUsageStatus(String workAttitudeNo, String usageStatus) throws Exception {
 
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("workAttitudeNo", workAttitudeNo);
@@ -113,7 +113,7 @@ public class HumanResourceDAOImpl implements HumanResourceDAO {
 	}
 
 	@Override
-	public void updateWorkAttitudeCodeUsageStatus(int workAttitudeCodeNo, String usageStatus) throws Exception {
+	public void updateWorkAttitudeCodeUsageStatus(String workAttitudeCodeNo, String usageStatus) throws Exception {
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("workAttitudeCodeNo", workAttitudeCodeNo);
@@ -149,7 +149,7 @@ public class HumanResourceDAOImpl implements HumanResourceDAO {
 	}
 
 	@Override
-	public void updateAppointmentStatus(int appointmentNo, String status) throws Exception {
+	public void updateAppointmentStatus(String appointmentNo, String status) throws Exception {
 
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("appointmentNo",appointmentNo);
@@ -177,7 +177,7 @@ public class HumanResourceDAOImpl implements HumanResourceDAO {
 	}
 
 	@Override
-	public void updateDepartmentUsageStatus(int departCodeNo, String status) throws Exception {
+	public void updateDepartmentUsageStatus(String departCodeNo, String status) throws Exception {
 
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("departCodeNo", departCodeNo);
@@ -194,7 +194,7 @@ public class HumanResourceDAOImpl implements HumanResourceDAO {
 	}
 	
 	@Override
-	public List<Commute> selectCommuteList(int employeeNo) throws Exception {
+	public List<Commute> selectCommuteList(String employeeNo) throws Exception {
 		
 		return sqlSession.selectList("CommuteMapper.selectCommuteList", employeeNo);
 	}
@@ -214,7 +214,7 @@ public class HumanResourceDAOImpl implements HumanResourceDAO {
 
 	//미정//////////////////////////////////
 	@Override
-	public String selectSignatureImageByEmployeeNo(int employeeNo) throws Exception {
+	public String selectSignatureImageByEmployeeNo(String employeeNo) throws Exception {
 		return null;
 	}
 
