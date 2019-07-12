@@ -205,7 +205,7 @@ public class ApprovalServiceImpl implements ApprovalService {
 	//사원번호로 사원도장, 직급명 가져오기
 	public Approver getFullApprover(Approver approver, String approvalNo) throws Exception {
 		System.out.println("ApprovalServiceImpl.getFullApprover() 사원번호 : "+Integer.parseInt(approver.getEmployeeNo()));
-		SimpleHumanResourceCard shrc = humanResourceDAO.selectSimpleHumanResourceCardByEmployeeNo(Integer.parseInt(approver.getEmployeeNo()));
+		SimpleHumanResourceCard shrc = humanResourceDAO.selectSimpleHumanResourceCardByEmployeeNo(approver.getEmployeeNo());
 		System.out.println("ApprovalServiceImpl.getFullApprover() 인사카드 : "+shrc);
 		approver.setEmployeeRankCodeName(shrc.getRankCodeName());
 		approver.setEmployeeSignatureImage(shrc.getSignatureImage());
