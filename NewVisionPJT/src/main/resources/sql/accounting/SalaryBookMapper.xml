@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		
+<mapper namespace="SalaryBookMapper">
+
+	<resultMap type="salaryBook" id="salaryBookSelectMap">
+		<result property="salaryDate"		column="salary_date"		jdbcType="VARCHAR"/>
+		<result property="salaryBookName"	column="salary_Book_Name"	jdbcType="VARCHAR"/>
+		<result property="totalSalary"		column="total_Salary"		jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	
+	<select id="selectSalaryBookList" parameterType="search" resultMap="salaryBookSelectMap">
+		SELECT 
+			salary_date, SUM(individual_total_salary) total_salary
+		FROM 
+			salary
+		GROUP BY 
+			salary_date
+		<where>
+			<choose>
+				<when test="minDate != null and maxDate != null and minDate != '' and maxDate != ''">
+					AND	salary_date BETWEEN #{minDate} AND #{maxDate}
+				</when>
+				<when test="maxDate != null and maxDate !=''">
+					AND	salary_date <![CDATA[ <= ]]> #{maxDate}
+				</when>
+				<when test="minDate != null and minDate !=''">
+					AND	salary_date <![CDATA[ >= ]]> #{minDate}
+				</when>
+			</choose>
+		</where>
+		ORDER BY salary_date DESC
+	</select>
+</mapper>

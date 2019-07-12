@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="AccountMapper">
+
+	<resultMap type="account" id="accountSelectMap">
+		<result property="accountRegNo"					column="account_reg_no" 			jdbcType="VARCHAR"/>
+		<result property="accountNo" 					column="account_no" 				jdbcType="VARCHAR"/>
+		<result property="accountUsageStatusCodeNo" 	column="usage_status_code_no" 		jdbcType="VARCHAR"/>
+		<result property="accountHolder" 				column="account_holder" 			jdbcType="VARCHAR"/>
+		<result property="bankCodeNo" 					column="bank_code_no" 				jdbcType="VARCHAR"/>
+		<result property="bankCodeName" 				column="bank_code_name" 			jdbcType="VARCHAR"/>
+		<result property="reference" 					column="reference" 					jdbcType="VARCHAR"/>
+		<result property="accountCategoryCodeNo" 		column="account_category_code_no" 	jdbcType="VARCHAR"/>
+		<result property="accountCategoryCodeName" 		column="account_category_code_name" jdbcType="VARCHAR"/>		
+	</resultMap>
+
+	<insert id="insertAccount" parameterType="account">
+		INSERT 
+		INTO account ( 
+			account_reg_no, 
+			account_no, 
+			bank_code_no, 
+			account_holder, 
+			account_category_code_no,
+			usage_status_code_no, 
+			reference
+		) 
+		VALUES ( 
+			seq_account_reg_no.NEXTVAL,
+			#{accountNo},
+			#{bankCodeNo},
+			#{accountHolder},
+			#{accountCategoryCodeNo},
+			'01'
+			#{reference}
+		)
+	</insert>
+	
+	<select id="selectAccountDetail" parameterType="string" resultMap="accountSelectMap">
+		SELECT 
+			account_reg_no, 
+			account_no, 
+			account_holder, 
+			bank_code_no, 
+			CODE_FUNCTION('bank', bank_code_no) AS bank_code_name,
+			reference, 
+			account_category_code_no, 
+			CODE_FUNCTION('accountCategory', account_category_code_no) AS account_category_code_name
+		FROM
+			account
+		WHERE
+			account_reg_no = #{value}
+	</select>
+	
+	<update id="updateAccount" parameterType="account">
+		UPDATE account
+			<set>
+				account_no = #{accountNo},
+				account_holder = #{accountHolder},
+				bank_code_no = #{bankCodeNo},
+				reference = #{reference},
+				account_category_code_no = #{accountCategoryCodeNo}
+			</set>
+		WHERE account_reg_no = #{accountRegNo}
+	</update>
+	
+	<update id="updateAccountUsageStatus" parameterType="account">
+		UPDATE account
+			<set>
+				usage_status_code_no = #{accountUsageStatusCodeNo}
+			</set>
+		WHERE account_reg_no = #{accountRegNo}
+	</update>
+	
+	<select id="selectAccountList" parameterType="search" resultMap="accountSelectMap">
+		SELECT
+			account_reg_no,
+			account_no,
+			reference,
+			bank_code_no,
+			CODE_FUNCTION('bank', bank_code_no) AS bank_code_name,
+			account_holder,
+			account_category_code_no,
+			CODE_FUNCTION('accountCategory', account_category_code_no) AS account_category_code_name,
+			usage_status_code_no
+		FROM
+			account
+		<where>
+			<choose>
+				<when test="searchKeyword != null and searchKeyword != ''">
+					AND account_reg_no = #{searchKeyword}
+					OR LOWER(reference) LIKE '%'||#{searchKeyword}||'%'
+				</when>		
+				<when test="usageCondition != null and usageCondition !=''">
+					AND	usage_status_code_no = #{usageCondition}
+				</when>
+			</choose>
+		</where>
+		ORDER BY account_reg_no ASC
+	</select>
+	
+	<select id="checkDuplicateAccount" parameterType="string" resultMap="accountSelectMap">
+		SELECT
+			account_no
+		FROM
+			account
+		<where>
+			account_no = #{value}
+		</where>
+	</select>
+
+</mapper>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ApprovalMapper">
+ 		
+	<resultMap id="approvalSelectMap" type="approval">
+		<result property="approvalNo" 			column="APPROVAL_NO" 			jdbcType="VARCHAR"/>
+		<result property="approvalTitle"	column="APPROVAL_TITLE" 		jdbcType="VARCHAR" />
+		<result property="approvalContent" 	column="APPROVAL_CONTENT" 		jdbcType="VARCHAR" />
+		<result property="submitDate" 				column="SUBMIT_DATE" 					jdbcType="VARCHAR" />
+		<result property="approverCount" 				column="APPROVER_COUNT" 					jdbcType="VARCHAR" />
+		<result property="totalApproverCount" 				column="TOTAL_APPROVER_COUNT" 					jdbcType="VARCHAR" />
+		<result property="approvalStatusCodeNo" 				column="APPROVAL_STATUS_CODE" 					jdbcType="VARCHAR" />
+		<result property="approvalStatusCodeName" 				column="CODE_Name" 					jdbcType="VARCHAR" />
+		<!--    결재자는 set메서드로 주입하는 것이 좋을 것 같다.-->	
+	</resultMap>
+	
+	<resultMap id="approverSelectMap" type="approver">
+		<result property="approverNumbering" column="APPROVER_NUMBERING" jdbcType="VARCHAR"/>
+		<result property="approvalNo" column="APPROVAL_NO" jdbcType="VARCHAR"/>
+		<result property="employeeNo" column="EMPLOYEE_NO" jdbcType="VARCHAR"/>
+		<result property="employeeSignatureImage" column="SIGNATURE_IMAGE" jdbcType="VARCHAR"/>
+		<result property="employeeRankCodeName" column="rank_code_name" jdbcType="VARCHAR"/>
+		<result property="ordinal" column="ORDINAL" jdbcType="VARCHAR"/>
+		<result property="approvalStatus" column="APPROVAL_STATUS" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<!-- 결재상신 -->
+	<insert 	id="insertApproval"		parameterType="approval" >
+		<selectKey keyProperty="approvalNo" resultType="string" order="AFTER">
+	    	select seq_approval_no.currval FROM DUAL
+	  	</selectKey>
+	 	INSERT
+		INTO approval( approval_no, approval_title, approval_content, submit_date, approval_status_code, approver_count, total_approver_count) 
+		VALUES	 ( seq_approval_no.nextval, #{approvalTitle}, #{approvalContent}, TO_CHAR(SYSDATE, 'YYYY/MM/DD'), '02', '1', #{totalApproverCount} 	)
+	</insert>
+	
+	<!-- 결재자 등록하기 -->
+	<insert 	id="insertApprover"		parameterType="approver" >
+	 	INSERT
+		INTO approver( approver_numbering, approval_no, employee_no, ordinal, approval_status, rank_code_name, signature_image ) 
+		VALUES	 ( seq_approver_numbering.nextval, #{approvalNo}, #{employeeNo}, #{ordinal}, '0', #{employeeRankCodeName : VARCHAR}, #{employeeSignatureImage : VARCHAR})
+	</insert>
+	
+	<!-- 결재자 가져오기 -->
+	<select id="selectApproverList" parameterType="string" resultMap="approverSelectMap">
+		SELECT
+		approver_numbering, approval_no, employee_no, ordinal, approval_status, rank_code_name, signature_image
+		FROM approver ap
+		WHERE approval_no = #{value}
+		ORDER BY ordinal ASC
+	</select>
+	
+	<!-- 결재목록 가져오기(상신, 반려, 완료, 대기) -->
+	<select id="selectApprovalList"	parameterType="search"	resultMap="approvalSelectMap">
+		SELECT
+		al.approval_no, al.approval_title, al.approval_content, al.submit_date, al.approval_status_code, CODE_FUNCTION('approvalStatusForIndividual', al.approval_status_code) approval_status_code_name, al.approver_count, al.total_approver_count 
+		FROM approval al, approver er
+		WHERE al.approval_no = er.approval_no 
+			  AND er.employee_no=#{searchKeyword} 
+		<if test="searchCondition==1">
+			  AND al.approver_count = er.ordinal
+			  AND al.approval_status_code IN ('02')
+		</if>
+		<if test="searchCondition==2">
+			  AND er.ordinal = '0'
+  			  AND al.approval_status_code IN ('02')
+		</if>
+		<if test="searchCondition==4">
+			  AND er.ordinal = '0'
+  			  AND al.approval_status_code IN ('04')
+		</if>
+		<if test="searchCondition==3">
+			  AND er.ordinal = '0'
+  			  AND al.approval_status_code IN ('03')
+		</if>
+		ORDER BY approval_no DESC
+	 </select>
+	 
+	 <!-- 결재서 상세보기  -->
+	 <select id="selectApprovalDetail"	parameterType="string"	resultMap="approvalSelectMap">
+		SELECT
+		approval_no, approval_title, approval_content, submit_date, approval_status_code, approver_count, total_approver_count 
+		FROM approval
+		WHERE approval_no=#{value}
+	 </select>
+	 
+	 <!-- 결재서상태 변경하기(진행, 완료, 반려) -->
+	 <update	id="updateApprovalStatus" parameterType="approval" >
+	   	UPDATE approval
+	   	<set>
+	   	  approval_status_code = #{approvalStatusCodeNo} ,
+	   	</set>
+	   	WHERE approval_no = #{approvalNo}
+	 </update>
+	 
+	 <!-- 결재자의 결재상태 변경하기(승인, 반려) -->
+	 <update	id="updateApproverStatus" parameterType="approver" >
+	   	UPDATE approver
+	   	<set>
+	   	  approval_status = #{approvalStatus},
+	   	</set>
+	   	WHERE approval_no = #{approvalNo} AND ordinal = #{ordinal}
+	 </update>
+	 
+	 <!-- 승인한결재자수 변경하기 -->
+	 <update	id="updateApproverCountFromApproval" parameterType="string" >
+	   	UPDATE approval
+	   	<set>
+	   	  approver_count = approver_count+1,
+	   	</set>
+	   	WHERE approval_no = #{value}
+	 </update>
+</mapper>

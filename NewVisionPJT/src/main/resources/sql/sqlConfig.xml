@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+  
+  <configuration>
+ 	 	<typeAliases>
+  			<typeAlias type="java.lang.Integer" alias="int"/>
+  			<typeAlias type="java.lang.String" alias="string"/>
+  			
+  			<typeAlias type="com.vision.erp.service.domain.Account" alias="account"/>
+  			<typeAlias type="com.vision.erp.service.domain.Appointment" alias="appointment"/>
+  			<typeAlias type="com.vision.erp.service.domain.Approval" alias="approval"/>
+  			<typeAlias type="com.vision.erp.service.domain.ApprovalForm" alias="approvalForm"/>
+  			<typeAlias type="com.vision.erp.service.domain.Branch" alias="branch"/>
+  			<typeAlias type="com.vision.erp.service.domain.BranchDailySales" alias="branchDailySales"/>
+  			<typeAlias type="com.vision.erp.service.domain.Card" alias="card"/>
+  			<typeAlias type="com.vision.erp.service.domain.Code" alias="code"/>
+  			<typeAlias type="com.vision.erp.service.domain.Commute" alias="commute"/>
+  			<typeAlias type="com.vision.erp.service.domain.DutyHours" alias="dutyHours"/>
+  			<typeAlias type="com.vision.erp.service.domain.HumanResourceCard" alias="humanResourceCard"/>
+  			<typeAlias type="com.vision.erp.service.domain.User" alias="user"/>
+  			<typeAlias type="com.vision.erp.service.domain.Notice" alias="notice"/>
+  			<typeAlias type="com.vision.erp.service.domain.OrderFromBranch" alias="orderFromBranch"/>
+  			<typeAlias type="com.vision.erp.service.domain.OrderFromBranchProduct" alias="orderFromBranchProduct"/>
+  			<typeAlias type="com.vision.erp.service.domain.OrderToVendor" alias="orderToVendor"/>
+  			<typeAlias type="com.vision.erp.service.domain.OrderToVendorProduct" alias="orderToVendorProduct"/>
+  			<typeAlias type="com.vision.erp.service.domain.Product" alias="product"/>
+  			<typeAlias type="com.vision.erp.service.domain.Salary" alias="salary"/>
+  			<typeAlias type="com.vision.erp.service.domain.SalaryBook" alias="salaryBook"/>
+  			<typeAlias type="com.vision.erp.service.domain.SalesMenu" alias="salesMenu"/>
+  			<typeAlias type="com.vision.erp.service.domain.SalesProduct" alias="salesProduct"/>
+  			<typeAlias type="com.vision.erp.service.domain.SimpleHumanResourceCard" alias="simpleHumanResourceCard"/>
+  			<typeAlias type="com.vision.erp.service.domain.Statement" alias="statement"/>
+  			<typeAlias type="com.vision.erp.service.domain.Vendor" alias="vendor"/>
+  			<typeAlias type="com.vision.erp.service.domain.WorkAttitude" alias="workAttitude"/>
+  			<typeAlias type="com.vision.erp.service.domain.WorkAttitudeCode" alias="workAttitudeCode"/>
+  			<typeAlias type="com.vision.erp.service.domain.Department" alias="department"/>
+  			<typeAlias type="com.vision.erp.service.domain.Approver" alias="approver"/>
+  			<typeAlias type="com.vision.erp.common.Search" alias="search"/>
+  		</typeAliases>
+  		
+  		<mappers>
+			<!-- Moon -->
+			 <mapper resource="sql/humanresource/AppointmentMapper.xml"/>
+			 <mapper resource="sql/humanresource/CommuteMapper.xml"/>
+			 <mapper resource="sql/humanresource/DepartmentMapper.xml"/>
+			 <mapper resource="sql/humanresource/HumanResourceCardMapper.xml"/>
+			 <mapper resource="sql/humanresource/WorkAttitudeCodeMapper.xml"/>
+			 <mapper resource="sql/humanresource/WorkAttitudeMapper.xml"/> 
+			
+			<!-- Ahn -->
+			 <mapper resource="sql/approval/ApprovalFormMapper.xml"/>
+			 <mapper resource="sql/approval/ApprovalMapper.xml"/>
+		 	 <mapper resource="sql/code/CodeMapper.xml"/>
+		 	 <mapper resource="sql/productionmanagementcodms/OrderFromBranchMapper.xml"/>
+
+			<!-- Shin -->
+             <mapper resource="sql/accounting/AccountMapper.xml"/>
+             <mapper resource="sql/accounting/CardMapper.xml"/>
+             <mapper resource="sql/accounting/SalaryBookMapper.xml"/>
+             <mapper resource="sql/accounting/SalaryMapper.xml"/>
+             <mapper resource="sql/accounting/StatementMapper.xml"/>
+             <mapper resource="sql/accounting/VendorMapper.xml"/>
+              
+            <!-- Han -->
+             <mapper resource="sql/businesssupport/BranchMapper.xml"/>
+             <mapper resource="sql/notice/NoticeMapper.xml"/>
+             <mapper resource="sql/branch/SalesProductMapper.xml"/>
+             <mapper resource="sql/branch/SalesMenuMapper.xml"/>
+              
+            <!-- Park -->
+             <mapper resource="sql/user/UserMapper.xml"/>
+             <mapper resource="sql/productionmanagementrudwn/OrderToVendorMapper.xml"/>
+             <mapper resource="sql/productionmanagementrudwn/OrderToVendorProductMapper.xml"/>
+             <mapper resource="sql/productionmanagementrudwn/ProductMapper.xml"/>
+		</mappers>
+  </configuration>

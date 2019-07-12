@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		
+<mapper namespace="AppointmentMapper">
+
+	<resultMap id="AppointmentSelectMap" type="appointment" >
+		<result property="appointNo" column="APPOINTMENT_NO" jdbcType="VARCHAR"/>
+		<result property="appointDate" column="APPOINTMENT_DATE" jdbcType="VARCHAR"/>
+		<result property="employeeNo" column="EMPLOYEE_NO" jdbcType="VARCHAR"/>
+		<result property="employeeName" column="EMPLOYEE_NAME" jdbcType="VARCHAR"/>
+		<result property="preDepartCodeNo" column="PRE_DEPART_CODE_NO" jdbcType="VARCHAR"/>
+		<result property="preDepartCodeName" column="PRE_DEPART_CODE_NAME" jdbcType="VARCHAR"/>
+		<result property="appointDepartCodeNo" column="APPOINTMENT_DEPART_CODE_NO" jdbcType="VARCHAR"/>
+		<result property="appointDepartCodeName" column="APPOINTMENT_DEPART_CODE_NAME" jdbcType="VARCHAR"/>
+		<result property="preRankCodeNo" column="PRE_RANK_CODE_NO" jdbcType="VARCHAR"/>
+		<result property="preRankCodeName" column="PRE_RANK_CODE_NAME" jdbcType="VARCHAR"/>
+		<result property="appointRankCodeNo" column="APPOINTMENT_RANK_CODE_NO" jdbcType="VARCHAR"/>
+		<result property="appointRankCodeName" column="APPOINTMENT_RANK_CODE_NAME" jdbcType="VARCHAR"/>
+		<result property="appointmentStatusCodeNo" column="APPOINTMENT_STATUS_CODE_NO" jdbcType="VARCHAR"/>
+		<result property="appointmentStatusCodeName" column="APPOINTMENT_STATUS_CODE_NAME" jdbcType="VARCHAR"/>
+		<result property="reference" column="REFER" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<insert id="insertAppointment" parameterType="appointment">
+		INSERT
+		  INTO	APPOINTMENT
+		  			(
+		  			APPOINTMENT_NO
+		  		,	APPOINTMENT_DATE
+		  		,	EMPLOYEE_NO
+		  		,	PRE_DEPART_CODE_NO
+		  		,	APPOINTMENT_DEPART_CODE_NO
+		  		,	PRE_RANK_CODE_NO
+		  		,	APPOINTMENT_RANK_CODE_NO
+		  		,	APPOINTMENT_STATUS_CODE_NO
+		  		,	REFER
+		  			)
+		VALUES	
+				(
+					SEQ_APPOINTMENT_NO.NEXTVAL
+				,	#{appointDate}
+				,	#{employeeNo}
+				,	#{preDepartCodeNo}
+				,	#{appointDepartCodeNo}
+				,	#{preRankCodeNo}
+				,	#{appointRankCodeNo}
+				,	#{appointmentStatusCodeNo}
+				,	#{reference}
+				)
+	</insert>
+	
+	<select id="selectAppointmentList" parameterType="search" resultMap="AppointmentSelectMap">
+		SELECT	a.APPOINTMENT_NO
+			 ,	a.APPOINTMENT_DATE
+			 ,	a.EMPLOYEE_NO
+			 ,	hr.EMPLOYEE_NAME
+			 ,	a.PRE_DEPART_CODE_NO
+			 ,	CODE_FUNCTION('depart',a.PRE_DEPART_CODE_NO) AS PRE_DEPART_CODE_NAME
+			 ,	a.APPOINTMENT_DEPART_CODE_NO
+			 ,	CODE_FUNCTION('depart',a.APPOINTMENT_DEPART_CODE_NO) AS APPOINTMENT_DEPART_CODE_NAME
+			 ,	a.PRE_RANK_CODE_NO
+			 ,	CODE_FUNCTION('rank',a.PRE_RANK_CODE_NO) AS PRE_RANK_CODE_NAME
+			 ,	a.APPOINTMENT_RANK_CODE_NO
+			 ,	CODE_FUNCTION('rank',a.APPOINTMENT_RANK_CODE_NO) AS APPOINTMENT_RANK_CODE_NAME
+			 ,	APPOINTMENT_STATUS_CODE_NO
+			 ,	CODE_FUNCTION('appointState',a.APPOINTMENT_STATUS_CODE_NO)	APPOINTMENT_STATUS_CODE_NAME
+			 ,	a.REFER				 
+		  FROM	HUMAN_RESOURCE_CARD hr
+		  	 ,	APPOINTMENT a
+	   <where>
+	   		a.EMPLOYEE_NO	=	hr.EMPLOYEE_NO
+	   		<if test="searchKeyword != null">
+	   		AND hr.EMPLOYEE_NO 		LIKE ('%'||#{searchKeyword}||'%')
+	   		 OR	hr.EMPLOYEE_NAME 	LIKE ('%'||#{searchKeyword}||'%')
+	   		</if>
+	  </where>
+	  
+	</select>
+	
+	<select id="selectAppointmentDetail" parameterType="string" resultMap="AppointmentSelectMap">
+		SELECT	a.APPOINTMENT_NO
+			 ,	a.APPOINTMENT_DATE
+			 ,	a.EMPLOYEE_NO
+			 ,	hr.EMPLOYEE_NAME
+			 ,	a.PRE_DEPART_CODE_NO
+			 ,	CODE_FUNCTION('depart',a.PRE_DEPART_CODE_NO) AS PRE_DEPART_CODE_NAME
+			 ,	a.APPOINTMENT_DEPART_CODE_NO
+			 ,	CODE_FUNCTION('depart',a.APPOINTMENT_DEPART_CODE_NO) AS APPOINTMENT_DEPART_CODE_NAME
+			 ,	a.PRE_RANK_CODE_NO
+			 ,	CODE_FUNCTION('rank',a.PRE_RANK_CODE_NO) AS PRE_RANK_CODE_NAME
+			 ,	a.APPOINTMENT_RANK_CODE_NO
+			 ,	CODE_FUNCTION('rank',a.APPOINTMENT_RANK_CODE_NO) AS APPOINTMENT_RANK_CODE_NAME
+			 ,	APPOINTMENT_STATUS_CODE_NO
+			 ,	CODE_FUNCTION('appointState',a.APPOINTMENT_STATUS_CODE_NO)	APPOINTMENT_STATUS_CODE_NAME
+			 ,	a.REFER				 
+		  FROM	HUMAN_RESOURCE_CARD hr
+		  	 ,	APPOINTMENT a
+	   <where>
+	   		a.EMPLOYEE_NO			=	hr.EMPLOYEE_NO
+	   	   AND	a.APPOINTMENT_NO	=	#{value}
+	  </where>
+	</select>
+	
+	<update id="updateAppointment" parameterType="appointment">
+		UPDATE	APPOINTMENT
+		   SET	APPOINTMENT_DATE			=	#{appointDate}
+		   	 ,	APPOINTMENT_DEPART_CODE_NO	=	#{appointDepartCodeNo}
+		   	 ,	APPOINTMENT_RANK_CODE_NO	=	#{appointRankCodeNo}
+		   	 ,	REFER						=	#{reference}
+		   		
+	  <where>
+	  			EMPLOYEE_NO = #{employeeNo}
+	  </where>
+	</update>
+	
+	<update id="updateAppointmentStatus" parameterType="hashmap">
+		UPDATE	APPOINTMENT
+		   SET	APPOINTMENT_STATUS_CODE_NO	=	#{status}
+	   <where>
+	   			APPOINTMENT_NO	=	#{appointmentNo}
+	   </where>
+	</update>
+
+</mapper>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="BranchMapper">
+
+	<resultMap id="branchSelectMap" type="branch">
+		<result property="branchNo" column="BRANCH_NO" jdbcType="VARCHAR"/>
+		<result property="branchName" column="BRANCH_NAME" jdbcType="VARCHAR"/>
+		<result property="zipCode" column="ZIP_CODE" jdbcType="VARCHAR"/>
+		<result property="address" column="ADDRESS" jdbcType="VARCHAR"/>
+		<result property="detailAdress" column="DETAIL_ADDRESS" jdbcType="VARCHAR"/>
+		<result property="businessLicenseNo" column="BUSINESS_LICENSE_NO" jdbcType="VARCHAR"/>
+		<result property="branchTel" column="BRANCH_TEL" jdbcType="VARCHAR"/>
+		<result property="branchManagerPhone" column="BRANCH_MANAGER_PHONE" jdbcType="VARCHAR"/>
+		<result property="branchManagerName" column="BRANCH_MANAGER_NAME" jdbcType="VARCHAR"/>
+		<result property="localCodeNo" column="LOCAL_CODE_NO" jdbcType="VARCHAR"/>
+	 	<result property="localCodeName" column="LOCAL_CODE_NAME" jdbcType="VARCHAR"/>
+		<result property="branchStatusCodeNo" column="USAGE_STATUS_CODE" jdbcType="VARCHAR"/>
+		<result property="branchRegDate" column="BRANCH_REG_DATE" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<insert 	id="insertBranch"	parameterType="branch" >
+	 	INSERT
+		INTO branch( 
+				BRANCH_NO , 
+				BRANCH_MANAGER_NAME , 
+				BRANCH_MANAGER_PHONE , 
+				BRANCH_TEL , 
+				BRANCH_REG_DATE, 
+				LOCAL_CODE_NO, 
+				ZIP_CODE, 
+				ADDRESS, 
+				DETAIL_ADDRESS, 
+				BUSINESS_LICENSE_NO,
+				USAGE_STATUS_CODE, 
+				BRANCH_NAME )
+		VALUES	 
+			('b'||SEQ_BRANCH_NO.NEXTVAL , 
+			#{branchManagerName} , 
+			#{branchManagerPhone} , 
+			#{branchTel} , 
+			TO_CHAR(SYSDATE, 'YY/MM/DD'), 
+			#{localCodeNo} , 
+			#{zipCode}, 
+			#{address}, 
+			#{detailAdress}, 
+			#{businessLicenseNo},
+			#{branchStatusCodeNo}, 
+			#{branchName})
+	 </insert>
+	 
+	 <select id="selectBranchDetail"	parameterType="string"	resultMap="branchSelectMap">
+	 	SELECT
+			BRANCH_NO , 
+			BRANCH_MANAGER_NAME , 
+			BRANCH_MANAGER_PHONE , 
+			BRANCH_TEL, 
+			BRANCH_REG_DATE, 
+			LOCAL_CODE_NO, 
+			ZIP_CODE, 
+			ADDRESS, 
+			DETAIL_ADDRESS, 
+			BUSINESS_LICENSE_NO, 
+			USAGE_STATUS_CODE, 
+			BRANCH_NAME, 
+			CODE_FUNCTION('local', LOCAL_CODE_NO) AS LOCAL_CODE_NAME
+		FROM 	branch
+		WHERE	BRANCH_NO = #{value}
+	 </select>
+	 
+	 <update id="updateBranch" parameterType="branch">
+	 	UPDATE branch
+	 	<set>
+		 	BRANCH_MANAGER_NAME = #{branchManagerName}, 
+		 	BRANCH_MANAGER_PHONE = #{branchManagerPhone}, 
+		 	BRANCH_TEL = #{branchTel}, 
+		 	LOCAL_CODE_NO = #{localCodeNo}, 
+		 	ZIP_CODE = #{zipCode}, 
+		 	ADDRESS = #{address}, 
+		 	DETAIL_ADDRESS = #{detailAdress},
+		 	BUSINESS_LICENSE_NO = #{businessLicenseNo}, 
+		 	BRANCH_NAME = #{branchName}
+	 	</set>
+	 	WHERE BRANCH_NO = #{branchNo}	 
+	 </update>
+	 
+	 <update id="updateBranchUsageCode" parameterType="string">
+	 	UPDATE branch
+	 	<set>
+	 		USAGE_STATUS_CODE = #{value}
+	 	</set>
+	 	WHERE BRANCH_NO = #{branchNo}
+	 </update>
+	 
+	 <select id="selectBranchList" parameterType="search" resultMap="branchSelectMap">
+	 	SELECT
+			BRANCH_NO , 
+			BRANCH_MANAGER_NAME , 
+			BRANCH_MANAGER_PHONE , 
+			BRANCH_TEL, 
+			BRANCH_REG_DATE, 
+			LOCAL_CODE_NO, 
+			ZIP_CODE, 
+			ADDRESS, 
+			DETAIL_ADDRESS, 
+			BUSINESS_LICENSE_NO, 
+			USAGE_STATUS_CODE, 
+			BRANCH_NAME, 
+			CODE_FUNCTION('local', LOCAL_CODE_NO) AS LOCAL_CODE_NAME
+		FROM 	branch
+			<if test="searchCondition != null"> 	 								
+				<where>
+					<choose>
+						<when test="searchCondition == 0 and searchKeyword != '' ">	 										 
+							BRANCH_NO = #{searchKeyword}
+						</when>
+						<when test="searchCondition == 1 and searchKeyword != '' ">	 										
+							BRANCH_NAME LIKE '%'||#{searchKeyword}||'%'
+						</when>
+						<otherwise>
+							LOCAL_CODE_NO LIKE '%'||#{searchKeyword}||'%'
+						</otherwise>
+					</choose>	 										
+				</where>
+			</if>
+		ORDER BY BRANCH_REG_DATE DESC		
+	 </select>
+	 
+	 <select id="getTotalCount" parameterType="search" resultType="int">
+	 	SELECT COUNT(*)
+	 	FROM ( SELECT BRANCH_NO, BRANCH_NAME, LOCAL_CODE_NO
+	 			FROM branch	 			
+	 			<if test="searchCondition != null">
+	 				<where>
+	 					<if test="searchCondition == 0 and searchKeyword != '' "> 
+							BRANCH_NO = #{searchKeyword}
+						</if>
+						<if test="searchCondition == 1 and searchKeyword != '' "> 
+							BRANCH_NAME LIKE '%'||#{searchKeyword}||'%'
+						</if>
+						<if test="searchCondition == 2 and searchKeyword != '' "> 
+							LOCAL_CODE_NO = #{searchKeyword}
+						</if> 
+	 				</where>
+	 			</if> ) countTable
+	 				
+	 </select>	 
+
+</mapper>

@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		
+<mapper namespace="HumanResourceCardMapper">
+
+	<resultMap id="HumanResourceCardSelectMap" type="humanResourceCard" >
+		<result property="employeeNo" column="EMPLOYEE_NO" jdbcType="VARCHAR"/>
+		<result property="employeeName" column="EMPLOYEE_NAME" jdbcType="VARCHAR"/>
+		<result property="departCodeNo" column="DEPART_CODE_NO" jdbcType="VARCHAR"/>
+		<result property="departCodeName" column="DEPART_CODE_NAME" jdbcType="VARCHAR"/>
+		<result property="ssn" column="SSN" jdbcType="VARCHAR"/>
+		<result property="rankCodeNo" column="RANK_CODE_NO" jdbcType="VARCHAR"/>
+		<result property="rankCodeName" column="RANK_CODE_NAME" jdbcType="VARCHAR"/>
+		<result property="joinDate" column="JOIN_DATE" jdbcType="VARCHAR"/>
+		<result property="employeePhone" column="EMPLOYEE_PHONE" jdbcType="VARCHAR"/>
+		<result property="employeeTel" column="EMPLOYEE_TEL" jdbcType="VARCHAR"/>
+		<result property="employeeEmail" column="EMAIL" jdbcType="VARCHAR"/>
+		<result property="resignation" column="RESIGN_CODE" jdbcType="VARCHAR"/>
+		<result property="resignDate" column="RESIGN_DATE" jdbcType="VARCHAR"/>
+		<result property="resignReason" column="RESIGN_REASON" jdbcType="VARCHAR"/>
+		<result property="zipCode" column="ZIP_CODE" jdbcType="VARCHAR"/>
+		<result property="address" column="ADDRESS" jdbcType="VARCHAR"/>
+		<result property="detailAddress" column="DETAIL_ADDRESS" jdbcType="VARCHAR"/>
+		<result property="profileImage" column="PROFILE_IMAGE" jdbcType="VARCHAR"/>
+		<result property="signatureImage" column="SIGNATURE_IMAGE" jdbcType="VARCHAR"/>
+		<result property="contractFile" column="CONTRACT_FILE" jdbcType="VARCHAR"/>
+		<result property="wage" column="WAGE" jdbcType="VARCHAR"/>
+		<result property="refer" column="REFER" jdbcType="VARCHAR"/>
+		
+		<association property="account" javaType="account">
+			<result property="accountRegNo" column="ACCOUNT_REG_NO"/>
+			<result property="accountNo" column="ACCOUNT_NO"/>
+			<result property="accountHolder" column="ACCOUNT_HOLDER"/>
+			<result property="bankCodeNo" column="BANK_CODE_NO"/>
+			<result property="bankCodeName" column="BANK_CODE_NAME"/>
+		</association>
+	</resultMap>
+	
+	<resultMap id="SimpleHumanResourceCardSelectMap" type="simpleHumanResourceCard" >
+		<result property="employeeNo" column="EMPLOYEE_NO" jdbcType="VARCHAR"/>
+		<result property="employeeName" column="EMPLOYEE_NAME" jdbcType="VARCHAR"/>
+		<result property="departCodeNo" column="DEPART_CODE_NO" jdbcType="VARCHAR"/>
+		<result property="departCodeName" column="DEPART_CODE_NAME" jdbcType="VARCHAR"/>
+		<result property="rankCodeNo" column="RANK_CODE_NO" jdbcType="VARCHAR"/>
+		<result property="rankCodeName" column="RANK_CODE_NAME" jdbcType="VARCHAR"/>
+		<result property="employeePhone" column="EMPLOYEE_PHONE" jdbcType="VARCHAR"/>
+		<result property="profileImage" column="PROFILE_IMAGE" jdbcType="VARCHAR"/>
+		<result property="signatureImage" column="SIGNATURE_IMAGE" jdbcType="VARCHAR"/>
+		<result property="wage" column="WAGE" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+<!-- ////////////////////////////////////////////////////////////////////////////////////// -->
+	
+	<insert id="insertHumanResourceCard" parameterType="humanResourceCard">
+		INSERT  
+		  INTO	HUMAN_RESOURCE_CARD	
+		  			(
+		  			EMPLOYEE_NO
+		  		,	EMPLOYEE_NAME
+		  		,	DEPART_CODE_NO
+		  		,	SSN
+		  		,	RANK_CODE_NO
+		  		,	JOIN_DATE
+		  		,	EMPLOYEE_PHONE
+		  		,	EMPLOYEE_TEL
+		  		,	EMAIL
+		  		,	ZIP_CODE
+		  		,	ADDRESS
+		  		,	DETAIL_ADDRESS
+		  		,	PROFILE_IMAGE
+		  		,	SIGNATURE_IMAGE
+		  		,	CONTRACT_FILE
+		  		,	WAGE
+		  		,	REFER
+		  		,	RESIGN_CODE
+		  		,	ACCOUNT_REG_NO
+		  			)
+		VALUES	
+					(
+					SEQ_EMPLOYEE_NO.NEXTVAL
+				,	#{employeeName}
+				,	#{departCodeNo}
+				,	#{ssn}
+				,	#{rankCodeNo}
+				,	#{joinDate}
+				,	#{employeePhone}
+				,	#{employeeTel}
+				,	#{employeeEmail}
+				,	#{zipCode}
+				,	#{address}
+				,	#{detailAddress}
+				,	#{profileImage}
+				,	#{signatureImage}
+				,	#{contractFile}
+				,	#{wage}
+				,	#{refer}
+				,	#{resignation}
+				,	#{account.accountRegNo}
+					)
+	</insert>
+	
+	<select id="selectHumanResourceCardList" parameterType="search" resultMap="HumanResourceCardSelectMap">  
+		SELECT	EMPLOYEE_NO
+	  		 ,	hr.EMPLOYEE_NAME
+	  		 ,	hr.DEPART_CODE_NO
+	  		 ,	CODE_FUNCTION('depart', hr.DEPART_CODE_NO) AS DEPART_CODE_NAME
+	  		 ,	hr.SSN
+	  		 ,	hr.RANK_CODE_NO
+	  		 ,	CODE_FUNCTION('rank', hr.RANK_CODE_NO) AS RANK_CODE_NAME
+	  		 ,	hr.JOIN_DATE
+	  		 ,	hr.EMPLOYEE_PHONE
+	  		 ,	hr.EMPLOYEE_TEL
+	  		 ,	hr.EMAIL
+	  		 ,	hr.RESIGN_CODE
+	  		 ,	hr.RESIGN_DATE
+	  		 ,	hr.RESIGN_REASON
+	  		 ,	hr.ZIP_CODE
+	  		 ,	hr.ADDRESS
+	  		 ,	hr.DETAIL_ADDRESS
+	  		 ,	hr.PROFILE_IMAGE
+	  		 ,	hr.SIGNATURE_IMAGE
+	  		 ,	hr.CONTRACT_FILE
+	  		 ,	hr.WAGE
+	  		 ,	hr.REFER
+	  		 ,	a.ACCOUNT_REG_NO
+	  		 ,	a.ACCOUNT_NO
+	  		 ,	a.BANK_CODE_NO 
+	  		 ,	CODE_FUNCTION('bank', a.BANK_CODE_NO) AS BANK_CODE_NAME
+		  FROM	HUMAN_RESOURCE_CARD hr
+		  		,ACCOUNT a
+		  
+		  <where>
+		  	hr.ACCOUNT_REG_NO 	= 	a.ACCOUNT_REG_NO
+		  	<if test="searchKeyword != null">
+		   AND	EMPLOYEE_NO 	LIKE ('%'||#{searchKeyword}||'%')
+		    OR	EMPLOYEE_NAME	LIKE ('%'||#{searchKeyword}||'%')
+		  	</if>
+		  </where>
+	</select>
+	
+	<select id="selectHumanResourceCardDetailByEmployeeNo" parameterType="int" resultMap="HumanResourceCardSelectMap">
+		SELECT	hr.EMPLOYEE_NO
+	  		 ,	hr.EMPLOYEE_NAME
+	  		 ,	hr.DEPART_CODE_NO
+	  		 ,	CODE_FUNCTION('depart', hr.DEPART_CODE_NO) AS DEPART_CODE_NAME
+	  		 ,	hr.SSN
+	  		 ,	hr.RANK_CODE_NO
+	  		 ,	CODE_FUNCTION('rank', hr.RANK_CODE_NO) AS RANK_CODE_NAME
+	  		 ,	hr.JOIN_DATE
+	  		 ,	hr.EMPLOYEE_PHONE
+	  		 ,	hr.EMPLOYEE_TEL
+	  		 ,	hr.EMAIL
+	  		 ,	hr.RESIGN_CODE
+	  		 ,	hr.RESIGN_DATE
+	  		 ,	hr.RESIGN_REASON
+	  		 ,	hr.ZIP_CODE
+	  		 ,	hr.ADDRESS
+	  		 ,	hr.DETAIL_ADDRESS
+	  		 ,	hr.PROFILE_IMAGE
+	  		 ,	hr.SIGNATURE_IMAGE
+	  		 ,	hr.CONTRACT_FILE
+	  		 ,	hr.WAGE
+	  		 ,	hr.REFER
+	  		 ,	a.ACCOUNT_REG_NO
+	  		 ,	a.ACCOUNT_NO
+	  		 ,	a.BANK_CODE_NO 
+	  		 ,	CODE_FUNCTION('bank', a.BANK_CODE_NO) AS BANK_CODE_NAME
+		  FROM	HUMAN_RESOURCE_CARD hr
+		  		,ACCOUNT a
+		  
+		  <where>
+		  		hr.ACCOUNT_REG_NO = a.ACCOUNT_REG_NO
+		   AND 	hr.EMPLOYEE_NO = #{value}
+		  </where>	
+	</select>
+	
+	<select id="selectSimpleHumanResourceCardByEmployeeNo" parameterType="int" resultMap="SimpleHumanResourceCardSelectMap">
+		SELECT	EMPLOYEE_NO
+			 ,	EMPLOYEE_NAME
+			 ,	DEPART_CODE_NO
+			 ,	CODE_FUNCTION('depart', DEPART_CODE_NO) AS DEPART_CODE_NAME
+			 ,	RANK_CODE_NO
+	  		 ,	CODE_FUNCTION('rank', RANK_CODE_NO) AS RANK_CODE_NAME
+	  		 ,	EMPLOYEE_PHONE
+	  		 ,	PROFILE_IMAGE
+	  		 ,	SIGNATURE_IMAGE
+	  		 ,	WAGE
+	  	  FROM	HUMAN_RESOURCE_CARD
+	  	  
+	  	  <where>
+	  	  		EMPLOYEE_NO = #{value}
+	  	  </where>
+	</select>
+	
+	<select id="selectSimpleHumanResourceCardList" parameterType="search" resultMap="SimpleHumanResourceCardSelectMap">
+		SELECT	EMPLOYEE_NO
+			 ,	EMPLOYEE_NAME
+			 ,	DEPART_CODE_NO
+			 ,	CODE_FUNCTION('depart', DEPART_CODE_NO) AS DEPART_CODE_NAME
+			 ,	RANK_CODE_NO
+	  		 ,	CODE_FUNCTION('rank', RANK_CODE_NO) AS RANK_CODE_NAME
+	  		 ,	EMPLOYEE_PHONE
+	  		 ,	PROFILE_IMAGE
+	  		 ,	SIGNATURE_IMAGE
+	  		 ,	WAGE
+	  	  FROM	HUMAN_RESOURCE_CARD
+	  	  
+	  	  <where>
+		  	<if test="searchKeyword != null">
+		   AND	EMPLOYEE_NO 	LIKE ('%'||#{searchKeyword}||'%')
+		    OR	EMPLOYEE_NAME	LIKE ('%'||#{searchKeyword}||'%')
+		  	</if>
+		  </where>
+	  	  
+	</select>
+	
+	<update id="updateHumanResourceCard" parameterType="humanResourceCard">
+		UPDATE	HUMAN_RESOURCE_CARD
+		   SET	
+		   		
+		   		EMPLOYEE_NAME	=	#{employeeName:VARCHAR}
+		   	 ,	DEPART_CODE_NO	=	#{departCodeNo:VARCHAR}
+		   	 ,	SSN				=	#{ssn:VARCHAR}
+		   	 ,	RANK_CODE_NO	=	#{rankCodeNo:VARCHAR}
+		   	 ,	JOIN_DATE		=	#{joinDate:VARCHAR}
+		   	 ,	EMPLOYEE_PHONE	=	#{employeePhone:VARCHAR}
+		   	 ,	EMPLOYEE_TEL	=	#{employeeTel:VARCHAR}
+		   	 ,	EMAIL			=	#{employeeEmail:VARCHAR}
+		   	 ,	RESIGN_CODE		=	#{resignation:VARCHAR}
+		   	 ,	RESIGN_DATE		=	#{resignDate:VARCHAR}
+		   	 ,	RESIGN_REASON	=	#{resignReason:VARCHAR}
+		   	 ,	ZIP_CODE		=	#{zipCode:VARCHAR}
+		   	 ,	ADDRESS			=	#{address:VARCHAR}
+		   	 ,	DETAIL_ADDRESS	=	#{detailAddress:VARCHAR}
+		   	 ,	PROFILE_IMAGE	=	#{profileImage:VARCHAR}
+		   	 ,	SIGNATURE_IMAGE	=	#{signatureImage:VARCHAR}
+		   	 ,	CONTRACT_FILE	=	#{contractFile:VARCHAR}
+		   	 ,	WAGE			=	#{wage:VARCHAR}
+		   	 ,	REFER			=	#{refer:VARCHAR}
+		   	 ,	ACCOUNT_REG_NO	=	#{account.accountRegNo:VARCHAR}
+		   		
+		   	<where>
+		   		EMPLOYEE_NO 	= 	#{employeeNo}
+		   	</where>
+	</update>
+
+</mapper>

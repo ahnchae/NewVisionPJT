@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="SalesMenuMapper">
+
+	<resultMap id="slaesMenuSelectMap" type="salesMenu">
+		<result property="menuNo" column="MENU_NO" jdbcType="VARCHAR"/>
+		<result property="menuName" column="MENU_NAME" jdbcType="VARCHAR"/>
+		<result property="menuPrice" column="MENU_PRICE" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<insert 	id="insertMenu"		parameterType="salesMenu" >
+	 	INSERT
+		INTO sales_menu
+		( 	MENU_NO,
+			MENU_NAME,
+			MENU_PRICE	)
+		VALUES	 
+		(	SEQ_MENU_NO.NEXTVAL , 
+			#{menuName} , 
+			#{menuPrice} )
+	 </insert>
+	 
+	 <select id="selectMenuList">
+	 	SELECT	MENU_NO,
+				MENU_NAME,
+				MENU_PRICE
+		FROM	sales_menu	 	
+	 </select>
+	 
+	 <update id="updateMenu"	parameterType="salesMenu">
+	 	UPDATE	sales_menu
+	 		<set>
+	 			MENU_NAME = #{menuName},
+	 			MENU_PRICE = #{menuPrice}
+	 		</set>
+	 </update>	 	 
+
+</mapper>

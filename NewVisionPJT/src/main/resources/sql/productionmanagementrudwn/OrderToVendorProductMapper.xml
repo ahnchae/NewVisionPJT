@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		
+<mapper namespace="OrderToVendorProductMapper">
+
+	<resultMap id="ProductSelectMap" type="product" >
+		<result property="productNo"               column="PROD_NO"            jdbcType="VARCHAR"/>
+		<result property="productName"             column="PROD_NAME"          jdbcType="VARCHAR"/>
+		<result property="purchasePrice"           column="PURCHASE_PRICE"     jdbcType="VARCHAR"/>
+		<result property="salesPrice"              column="SAILES_PRICE"       jdbcType="VARCHAR"/>
+		<result property="quantity"                column="QUANTITY"           jdbcType="VARCHAR"/>
+		<result property="vendorNo"                column="VENDOR_NO"          jdbcType="VARCHAR"/>
+		<result property="productUsageStatusCodeNo" column="USAGE_STATUS_CODE_NO"          jdbcType="VARCHAR"/>
+		<result property="productUsageStatusCodeName" column="USAGE_STATUS_CODE_NAME"      jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<insert id="insertProduct">
+		INSERT
+		  INTO	product
+		  			(
+		  			PROD_NO,
+		  			PROD_NAME,
+		  			PURCHASE_PRICE,
+		  			SAILES_PRICE,
+		  			QUANTITY,
+		  			VENDOR_NO,
+		  			USAGE_STATUS_CODE_NO,
+		  			USAGE_STATUS_CODE_NAME
+		  			)
+		VALUES	
+				(
+					SEQ_PRODUCT_NO.NEXTVAL,
+					#{productName},
+					#{purchasePrice},
+					#{salesPrice},
+					#{quantity},
+					#{vendorNo},
+					#{USAGE_STATUS_CODE_NO},
+					#{USAGE_STATUS_CODE_NAME}
+				)
+	</insert>
+	
+	<update id="updateProduct" parameterType="product">
+		UPDATE product
+			<set>
+				PURCHASE_PRICE = #{purchasePrice}
+				SAILES_PRICE = #{salesPrice}
+				QUANTITY = 	#{quantity}
+			</set>
+		WHERE PROD_NO = #{prodNo}
+	</update>
+	
+	
+
+</mapper>

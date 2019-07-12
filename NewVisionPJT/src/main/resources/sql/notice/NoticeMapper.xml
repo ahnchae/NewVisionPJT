@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="NoticeMapper">
+
+	<resultMap id="noticeSelectMap" type="notice">
+		<result property="noticeNo" column="NOTICE_NO" jdbcType="VARCHAR"/>
+		<result property="noticeRegDate" column="NOTICE_REG_DATE" jdbcType="VARCHAR"/>
+		<result property="noticeTitle" column="NOTICE_TITLE" jdbcType="VARCHAR"/>
+		<result property="content" column="NOTICE_CONTENTS" jdbcType="VARCHAR"/>
+		<result property="employeeNo" column="EMPLOYEE_NO" jdbcType="VARCHAR"/>
+		<result property="employeeName" column="EMPLOYEE_NAME" jdbcType="VARCHAR"/>
+		<result property="departCodeName" column="DEPART_CODE_NAME" jdbcType="VARCHAR"/>
+		<result property="readAuthority" column="READ_AUTHORITY" jdbcType="VARCHAR"/>
+		<result property="viewCount" column="VIEW_COUNT" jdbcType="VARCHAR"/>
+		<result property="noticeStatusCodeNo" column="USAGE_STATUS_CODE" jdbcType="VARCHAR"/>
+		<result property="noticeStatusCodeName" column="RECODE_CODE_NAME" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<insert 	id="insertNotice"	parameterType="notice" >
+	 	INSERT
+		INTO notice( 
+				NOTICE_NO , 
+				EMPLOYEE_NO,
+				NOTICE_REG_DATE , 
+				NOTICE_TITLE , 
+				NOTICE_CONTENTS , 
+				READ_AUTHORITY, 
+				VIEW_COUNT, 
+				USAGE_STATUS_CODE )
+		VALUES	 
+			(SEQ_NOTICE_NO.NEXTVAL , 
+			#{employeeNo} , 
+			TO_CHAR(SYSDATE, 'YY/MM/DD') , 
+			#{noticeTitle} , 			 
+			#{content} , 
+			#{readAuthority}, 
+			#{viewCount}, 
+			#{noticeStatusCodeName})
+	 </insert>
+	 
+	 <select id="selectNoticeDetail"	parameterType="string"	resultMap="noticeSelectMap">
+	 	SELECT
+		 	notice.NOTICE_NO,
+		 	notice.NOTICE_REG_DATE,
+		 	notice.EMPLOYEE_NO,
+		 	notice.NOTICE_TITLE,
+		 	notice.NOTICE_CONTENTS,
+		 	notice.READ_AUTHORITY,
+		 	notice.VIEW_COUNT,
+		 	notice.USAGE_STATUS_CODE,
+		 	human_resource_card.EMPLOYEE_NAME,
+		 	CODE_FUNCTION('depart', human_resource_card.DEPART_CODE_NO) AS DEPART_CODE_NAME
+	 	FROM	notice, human_resource_card
+	 	WHERE	notice.EMPLOYEE_NO = human_resource_card.EMPLOYEE_NO
+	 	AND		notice.NOTICE_NO = #{value}	 	
+	 </select>
+	 
+	 <update id="updateNotice" parameterType="notice">
+	 	UPDATE notice
+	 	<set>
+			EMPLOYEE_NO = #{employeeNo},
+			NOTICE_TITLE = #{noticeTitle}, 
+			NOTICE_CONTENTS = #{content}, 
+			READ_AUTHORITY = #{departCodeName}
+	 	</set>
+	 	WHERE	NOTICE_NO = #{noticeNo}	 
+	 </update>
+	 
+	 <update id="updateNoticeUsageCode" parameterType="notice">
+	 	UPDATE notice
+	 	<set>
+	 		USAGE_STATUS_CODE = #{noticeStatusCodeNo}
+	 	</set>
+	 	WHERE	NOTICE_NO = #{noticeNo}	 
+	 </update>
+	 
+	 <update id="updateNoticeViewCount" parameterType="notice">
+	 	UPDATE notice
+	 	<set>
+	 		VIEW_COUNT = #{viewCount}
+	 	</set>
+	 	WHERE	NOTICE_NO = #{noticeNo}
+	 </update>
+	 
+	 <select id="selectHeaderNameList">
+	 </select>
+	 
+	 <select id="selectNoticeList" parameterType="search" resultMap="noticeSelectMap">	 
+	 	SELECT
+	 			notice.NOTICE_NO , 
+				notice.NOTICE_REG_DATE , 
+				notice.NOTICE_TITLE , 
+				notice.READ_AUTHORITY, 
+				notice.VIEW_COUNT, 
+				notice.USAGE_STATUS_CODE,
+				human_resource_card.EMPLOYEE_NAME
+	 	FROM	notice, human_resource_card
+			<where>
+				notice.EMPLOYEE_NO = human_resource_card.EMPLOYEE_NO
+					<if test="searchCondition != null">
+						<choose>
+							<when test="searchCondition == 0 and searchKeyword != '' ">	 										 
+								notice.NOTICE_TITLE LIKE '%'||#{searchKeyword}||'%'
+							</when>
+							<when test="searchCondition == 1 and searchKeyword != '' ">	 										
+								human_resource_card.EMPLOYEE_NAME LIKE '%'||#{searchKeyword}||'%'
+							</when>
+							<otherwise>
+								notice.USAGE_STATUS_CODE = #{searchKeyword}
+							</otherwise>
+						</choose>
+					</if>	 										
+			</where>
+		ORDER BY notice.NOTICE_REG_DATE DESC
+	 </select>
+	 
+	 <select id="getTotalCount" parameterType="search" resultType="int">
+	 	SELECT COUNT(*)
+	 	FROM ( SELECT 
+					notice.NOTICE_REG_DATE , 
+					notice.NOTICE_TITLE , 
+					human_resource_card.EMPLOYEE_NAME
+	 			FROM	notice, human_resource_card	 			
+	 				<where>
+	 					notice.EMPLOYEE_NO = human_resource_card.EMPLOYEE_NO
+	 					<if test="searchCondition != null">
+		 					<choose>
+							<when test="searchCondition == 0 and searchKeyword != '' ">	 										 
+								notice.NOTICE_TITLE LIKE '%'||#{searchKeyword}||'%'
+							</when>
+							<when test="searchCondition == 1 and searchKeyword != '' ">	 										
+								human_resource_card.EMPLOYEE_NAME LIKE '%'||#{searchKeyword}||'%'
+							</when>
+							<otherwise>
+								notice.USAGE_STATUS_CODE = #{searchKeyword}
+							</otherwise>
+							</choose>
+						</if> 
+	 				</where> ) countTable
+	 				
+	 </select>	 
+
+</mapper>

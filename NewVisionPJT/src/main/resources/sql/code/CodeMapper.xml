@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="CodeMapper">
+ 		
+	<resultMap id="codeSelectMap" type="code">
+		<result property="groupCode" 			column="GROUP_CODE" 			jdbcType="VARCHAR"/>
+		<result property="groupCodeName"	column="GROUP_CODE_NAME" 		jdbcType="VARCHAR" />
+		<result property="codeNo" 	column="CODE_NO" 		jdbcType="VARCHAR" />
+		<result property="codeName" 				column="CODE_NAME" 					jdbcType="VARCHAR" />
+		<result property="codeUsageStatus" 				column="CODE_USAGE_STATUS" 					jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<!-- 그룹코드 리스트 가져오기 -->
+	<select 	id="selectGroupCodeList" resultMap="codeSelectMap">
+		SELECT
+		group_code, group_code_name, code_no, code_name, code_usage_status		
+		FROM code
+		WHERE code_usage_status = 'Y'
+		ORDER BY group_code ASC, code_no ASC
+	 </select>
+	 
+	 <!-- 코드 등록하기 -->
+	 <insert 	id="insertCode"		parameterType="code" >
+	 	INSERT
+		INTO code(code_numbering, group_code, group_code_name, code_no, code_name, code_usage_status) 
+		VALUES	 (	seq_code_numbering.nextval, #{groupCode} , #{groupCodeName}, #{codeNo}, #{codeName}, 'Y' )
+	 </insert>
+	 
+	 
+	 <!-- 코드 리스트 가져오기 -->
+	 <select 	id="selectCodeList"	parameterType="search"	resultMap="codeSelectMap">
+		SELECT
+		group_code, group_code_name, code_no, code_name, code_usage_status	
+		FROM code 
+		WHERE code_usage_status = 'Y' AND group_code = #{searchKeyword}
+		ORDER BY code_no ASC
+	 </select>
+	 
+	 <!-- 코드명 수정하기 -->
+	 <update	id="updateCode" parameterType="code" >
+	   	UPDATE code
+	   	<set>
+	   		code_name = #{codeName}
+	   	</set>
+	   	WHERE group_code = #{groupCode} AND code_no = #{codeNo}
+	 </update>
+	 
+	 <!-- 코드명 중복확인 -->
+	 <select 	id="selectDuplicateCodeNo"	parameterType="code"	resultMap="codeSelectMap">
+		SELECT
+		group_code, group_code_name, code_no, code_name, code_usage_status	
+		FROM code 
+		WHERE code_usage_status = 'Y' AND group_code = #{groupCode} AND code_name = #{codeName}
+	 </select>
+</mapper>

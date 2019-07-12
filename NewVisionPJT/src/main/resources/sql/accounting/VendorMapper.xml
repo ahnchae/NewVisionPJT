@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="VendorMapper">
+
+	<resultMap type="vendor" id="vendorSelectMap">
+		<result property="vendorNo" 					column="vendor_no" 					jdbcType="VARCHAR"/>
+		<result property="vendorName" 					column="vendor_name" 				jdbcType="VARCHAR"/>
+		<result property="vendorCategoryCodeNo" 		column="vendor_category_code_no" 	jdbcType="VARCHAR"/>
+		<result property="vendorCategoryCodeName" 		column="vendor_category_code_name" 	jdbcType="VARCHAR"/>
+		<result property="vendorUsageStatusCodeNo" 		column="usage_status_code_no" 		jdbcType="VARCHAR"/>
+		<result property="vendorUsageStatusCodeName" 	column="usage_status_code_name" 	jdbcType="VARCHAR"/>
+		<result property="vendorPhone" 					column="vendor_phone" 				jdbcType="VARCHAR"/>
+		<result property="vendorTel" 					column="vendor_tel" 				jdbcType="VARCHAR"/>
+		<result property="representativeName" 			column="representative_name" 		jdbcType="VARCHAR"/>
+		<result property="address" 						column="address" 					jdbcType="VARCHAR"/>
+		<result property="zipCode" 						column="zip_code" 					jdbcType="VARCHAR"/>
+		<result property="detailAddress" 				column="detail_address" 			jdbcType="VARCHAR"/>
+		
+		<association property="vendorAccount" javaType="account">
+			<result property="bankCodeNo" 		column="bank_code_no"/>
+			<result property="bankCodeName" 	column="bank_code_name"/>
+			<result property="accountNo" 		column="vendor_account_no"/>
+			<result property="accountHolder" 	column="account_holder"/>
+		</association>
+	</resultMap>
+	
+	<insert id="insertVendor" parameterType="vendor">
+		INSERT 
+		INTO vendor ( 
+			vendor_no, 
+			vendor_name,
+			vendor_category_code_no,
+			usage_status_code_no,
+			vendor_phone,
+			vendor_tel,
+			representative_name,
+			address,
+			zip_code,
+			detail_address,
+			bank_code_no,
+			vendor_account_no,
+			account_holder
+		) 
+		VALUES ( 
+			seq_vendor_no.NEXTVAL,
+			#{vendorName},
+			#{vendorCategoryCodeNo},
+			'01',
+			#{vendorPhone},
+			#{vendorTel},
+			#{representativeName},
+			#{address},
+			#{zipCode},
+			#{detailAddress},
+			#{vendorAccount.bankCodeNo},
+			#{vendorAccount.accountNo},
+			#{vendorAccount.accountHolder}
+		)
+	</insert>
+	
+	<select id="selectVendorDetail" parameterType="string" resultMap="vendorSelectMap">
+		SELECT 
+			vendor_no, 
+			vendor_name,
+			vendor_category_code_no,
+			CODE_FUNCTION('vendor',vendor_category_code_no) AS vendor_category_code_name,
+			vendor_phone,
+			vendor_tel,
+			representative_name,
+			address,
+			zip_code,
+			detail_address,
+			bank_code_no,
+			CODE_FUNCTION('bank', bank_code_no) AS bank_code_name,
+			vendor_account_no,
+			account_holder
+		FROM
+			vendor
+		WHERE
+			vendor_no = #{value}
+	</select>
+	
+	<update id="updateVendor" parameterType="vendor">
+		UPDATE vendor
+			<set>
+				vendor_name = #{vendorName},
+				vendor_category_code_no = #{vendorCategoryCodeNo},
+				vendor_phone = #{vendorPhone},
+				vendor_tel = #{vendorTel},
+				representative_name = #{representativeName},
+				address = #{address},
+				zip_code = #{zipCode},
+				detail_address = #{detailAddress},
+				bank_code_no = #{vendorAccount.bankCodeNo},
+				vendor_account_no = #{vendorAccount.accountNo},
+				account_holder = #{vendorAccount.accountHolder}
+			</set>
+		WHERE vendor_no = #{vendorNo}
+	</update>
+	
+	<update id="updateVendorUsageStatus" parameterType="vendor">
+		UPDATE vendor
+			<set>
+				usage_status_code_no = #{vendorUsageStatusCodeNo}
+			</set>
+		WHERE vendor_no = #{vendorNo}
+	</update>
+	
+	<select id="selectVendorList" parameterType="search" resultMap="vendorSelectMap">
+		SELECT
+			vendor_no,
+			vendor_name,
+			vendor_category_code_no,
+			CODE_FUNCTION('vendor',vendor_category_code_no) AS vendor_category_code_name,
+			vendor_phone,
+			vendor_tel,
+			representative_name,
+			address,
+			zip_code,
+			detail_address,
+			bank_code_no,
+			CODE_FUNCTION('bank', bank_code_no) AS bank_code_name,
+			vendor_account_no,
+			account_holder
+		FROM
+			vendor
+		<where>
+			<choose>
+				<when test="searchKeyword != null and searchKeyword != ''">
+					AND vendor_no = #{searchKeyword}
+					OR LOWER(vendor_name) LIKE '%'||#{searchKeyword}||'%'
+				</when>		
+				<when test="usageCondition != null and usageCondition !=''">
+					AND	usage_status_code_no = #{usageCondition}
+				</when>
+			</choose>
+		</where>
+		ORDER BY vendor_no ASC
+	</select>
+	
+</mapper>

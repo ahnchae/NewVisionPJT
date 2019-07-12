@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		
+<mapper namespace="CardMapper">
+	
+	<resultMap type="card" id="cardSelectMap">
+		<result property="cardRegNo" 				column="card_reg_no" 				jdbcType="VARCHAR"/>
+		<result property="cardNo" 					column="card_no" 					jdbcType="VARCHAR"/>
+		<result property="cardManager" 				column="card_manager" 			    jdbcType="VARCHAR"/>
+		<result property="cardManagerName" 			column="card_manager_name" 			jdbcType="VARCHAR"/>
+		<result property="cardCategoryCodeNo" 		column="card_category_code_no" 		jdbcType="VARCHAR"/>
+		<result property="cardCategoryCodeName" 	column="card_category_code_name" 	jdbcType="VARCHAR"/>
+		<result property="cardName" 				column="card_name" 					jdbcType="VARCHAR"/>
+		<result property="cardCompanyCodeNo" 		column="card_company_code_no" 		jdbcType="VARCHAR"/>
+		<result property="cardCompanyCodeName" 		column="card_company_code_name" 	jdbcType="VARCHAR"/>
+		<result property="cardImage" 				column="card_image" 				jdbcType="VARCHAR"/>
+		<result property="cardUsageStatusCodeNo" 	column="usage_status_code_no" 		jdbcType="VARCHAR"/>
+		<result property="accountNo" 				column="account_no" 				jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<insert id="insertCard" parameterType="card">
+		INSERT 
+		INTO card ( 
+			card_reg_no,
+			card_no,
+			card_manager,
+			card_category_code_no, 
+			card_name,
+			card_company_code_no,
+			card_image,
+			usage_status_code_no,
+			account_no
+		) 
+		VALUES ( 
+			seq_card_reg_no.NEXTVAL,
+			#{cardNo},
+			#{cardManager},
+			#{cardCategoryCodeNo},
+			#{cardName},
+			#{cardCompanyCodeNo},
+			#{cardImage},
+			'01',
+			#{accountNo}
+		)
+	</insert>
+	
+	<select id="selectCardDetail" parameterType="string" resultMap="cardSelectMap">
+		SELECT
+			c.card_reg_no,
+			c.card_no,
+			c.card_name,
+			c.card_company_code_no,
+			CODE_FUNCTION('card', c.card_company_code_no) AS card_company_code_name,
+			c.card_category_code_no,
+			CODE_FUNCTION('cardCategory', c.card_category_code_no) AS card_category_code_name,
+			c.account_no,
+			c.card_manager,
+			hr.employee_name card_manager_name,
+			c.card_image
+		FROM
+			card c, human_resource_card hr
+		WHERE
+			c.card_manager = hr.employee_no 
+		AND
+			c.card_reg_no = #{value}
+	</select>
+	
+	<update id="updateCard" parameterType="card">
+		UPDATE card
+			<set>
+				card_no = #{cardNo},
+				card_name = #{cardName},
+				card_company_code_no = #{cardCompanyCodeNo},
+				card_category_code_no = #{cardCategoryCodeNo},
+				account_no = #{accountNo},
+				card_manager = #{cardManager},
+				card_image = #{cardImage}
+			</set>
+		WHERE card_reg_no = #{cardRegNo}
+	</update>
+	
+	<update id="updateCardUsageStatus" parameterType="card">
+		UPDATE card
+			<set>
+				usage_status_code_no = #{cardUsageStatusCodeNo}
+			</set>
+		WHERE card_reg_no = #{cardRegNo}
+	</update>
+	
+	<select id="selectCardList" parameterType="search" resultMap="cardSelectMap">
+		SELECT
+			c.card_reg_no,
+			c.card_no,
+			c.card_name,
+			CODE_FUNCTION('card', c.card_company_code_no) AS card_company_code_name,
+			CODE_FUNCTION('cardCategory', c.card_category_code_no) AS card_category_code_name,
+			c.account_no,
+			c.card_manager,
+			hr.employee_name card_manager_name,
+			c.card_image,
+			c.usage_status_code_no
+		FROM
+			card c, human_resource_card hr
+		<where>
+			<choose>
+				<when test="true">
+					c.card_manager = hr.employee_no
+				</when>
+				<when test="searchKeyword != null and searchKeyword != ''">
+					AND c.card_reg_no = #{searchKeyword}
+					OR LOWER(c.card_name) LIKE '%'||#{searchKeyword}||'%'
+				</when>		
+				<when test="usageCondition != null and usageCondition !=''">
+					AND	c.usage_status_code_no = #{usageCondition}
+				</when>
+			</choose>
+		</where>
+		ORDER BY card_reg_no ASC
+	</select>
+	
+	<select id="checkDuplicateCard" parameterType="string" resultMap="cardSelectMap">
+		SELECT
+			card_no
+		FROM
+			card
+		<where>
+			card_no = #{value}
+		</where>
+	</select>
+	
+</mapper>

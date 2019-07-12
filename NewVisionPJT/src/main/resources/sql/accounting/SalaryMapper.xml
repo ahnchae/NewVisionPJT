@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		
+<mapper namespace="SalaryMapper">
+
+	<resultMap type="salary" id="salarySelectMap">
+		<result property="salaryNumbering"			column="salary_numbering"			jdbcType="VARCHAR"/>
+		<result property="salaryDate"				column="salary_date"				jdbcType="VARCHAR"/>
+		<result property="employeeNo"				column="employee_no"				jdbcType="VARCHAR"/>
+		<result property="employeeName"				column="employee_name"				jdbcType="VARCHAR"/>
+		<result property="individualTotalSalary"	column="individual_total_salary"	jdbcType="VARCHAR"/>
+		<result property="salaryStatusCodeNo"		column="salary_status_code_no"		jdbcType="VARCHAR"/>
+		<result property="salaryStatusCodeName"		column="salary_status_code_name"	jdbcType="VARCHAR"/>
+		<result property="wage"						column="wage"						jdbcType="VARCHAR"/>
+		<result property="totalRegularWorkTime"		column="total_regular_work_time"	jdbcType="VARCHAR"/>
+		<result property="totalExtendWorkTime"		column="total_extend_work_time"		jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<insert id="insertSalary" parameterType="salary">
+		INSERT 
+		INTO salary ( 
+			salary_numbering, 
+			salary_date, 
+			employee_no, 
+			individual_total_salary, 
+			salary_status_code_no,
+			wage, 
+			total_regular_work_time,
+			total_extend_work_time
+		) 
+		VALUES ( 
+			seq_salary_numbering.NEXTVAL,
+			#{salaryDate},
+			#{employeeNo},
+			#{individualTotalSalary},
+			'01'
+			#{wage},
+			#{totalRegularWorkTime},
+			#{totalExtendWorkTime}
+		)
+	</insert>
+	
+	<select id="selectSalaryDetail" parameterType="string" resultMap="salarySelectMap">
+		SELECT 
+			s.salary_numbering, 
+			s.salary_date, 
+			s.employee_no, 
+            hr.employee_name,
+			s.individual_total_salary, 
+			s.wage, 
+			s.total_regular_work_time,
+			s.total_extend_work_time
+		FROM
+			salary s, human_resource_card hr
+		WHERE
+			s.employee_no = hr.employee_no AND s.salary_numbering = #{value}
+	</select>
+
+	<update id="updateSalary" parameterType="salary">
+		UPDATE salary
+			<set>
+				individual_total_salary = #{individualTotalSalary}
+			</set>
+		WHERE salary_numbering = #{salaryNumbering}
+	</update>
+	
+	<update id="updateSalaryStatus" parameterType="salary">
+		UPDATE salary
+			<set>
+				salary_status_code_no = #{salaryStatusCodeNo}
+			</set>
+		WHERE salary_numbering = #{salaryNumbering}
+	</update>
+	
+	<select id="selectSalaryList" parameterType="search" resultMap="salarySelectMap">
+		SELECT
+			salary_numbering,
+			salary_date,
+			employee_no, 
+			individual_total_salary, 
+			salary_status_code_no,
+			CODE_FUNCTION('pay', salary_status_code_no) AS salary_status_code_name,
+			wage, 
+			total_regular_work_time,
+			total_extend_work_time
+		FROM
+			salary
+		<where>
+			<choose>
+				<when test="searchKeyword != null and searchKeyword != ''">
+					AND employee_no = #{searchKeyword}
+				</when>
+				<when test="minDate != null and maxDate != null and minDate != '' and maxDate != ''">
+					AND	salary_date BETWEEN #{minDate} AND #{maxDate}
+				</when>
+				<when test="maxDate != null and maxDate !=''">
+					AND	salary_date <![CDATA[ <= ]]> #{maxDate}
+				</when>
+				<when test="minDate != null and minDate !=''">
+					AND	salary_date <![CDATA[ >= ]]> #{minDate}
+				</when>
+			</choose>
+		</where>
+		ORDER BY salary_date DESC
+	</select>
+	
+	<select id="checkDuplicateSalary" parameterType="string" resultMap="salarySelectMap">
+		SELECT
+			salary_date
+		FROM
+			salary
+		<where>
+			salary_date = #{value}
+		</where>
+	</select>
+	
+	<select id="calculateSalary" parameterType="string" resultMap="salarySelectMap">
+		SELECT 
+			hr.employee_no, 
+			hr.wage, 
+			vt.total_regular_work_time, 
+			vt.total_extend_work_time, 
+			salary_function(hr.wage,vt.total_regular_work_time,vt.total_extend_work_time) AS individual_salary
+		FROM 
+			human_resource_card hr, (
+	    		SELECT 
+	    			employee_no, 
+	    			SUM(regular_work_time) total_regular_work_time , 
+	    			SUM(extends_work_time) total_extend_work_time
+	    		FROM 
+	    			duty_hours
+	    		WHERE 
+	    			work_date LIKE #{value}||'%' 
+	    		GROUP BY employee_no
+			)vt
+		WHERE 
+			hr.employee_no = vt.employee_no
+	</select>
+	
+	
+</mapper>
+

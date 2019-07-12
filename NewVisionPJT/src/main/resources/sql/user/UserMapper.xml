@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		
+<mapper namespace="UserMapper">
+
+	<resultMap id="UserSelectMap" type="user" >
+		<result property="userId"             column="USER_ID"             jdbcType="VARCHAR"/>
+		<result property="employeeNo"         column="EMPLOYEE_NO"         jdbcType="VARCHAR"/>
+		<result property="branchNo"           column="BRANCH_NO"            jdbcType="VARCHAR"/>
+		<result property="password"           column="PASSWORD"           jdbcType="VARCHAR"/>
+		<result property="memberCodeNo"       column="MEMBER_CODE_NO"         jdbcType="VARCHAR"/>
+		<result property="memberCodeName"     column="MEMBER_CODE_NAME"                    jdbcType="VARCHAR"/>
+		<result property="memberUsageStatusCodeNo" column="USAGE_STATUS_CODE_NO"       jdbcType="VARCHAR"/>
+		<result property="accessMenuCodeNo"        column="ACCESS_MENU_CODE"               jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<insert id="insertUser">
+		INSERT
+		  INTO	users
+		  			(
+		  			USER_ID,
+		  			EMPLOYEE_NO,
+		  			PASSWORD,
+		  			BRANCH_NO,
+		  			MEMBER_STATUS_CODE_NO,
+		  			USAGE_STATUS_CODE_NO
+		  			)
+		VALUES	
+				(
+					#{userId},
+					#{employeeNo},
+					#{password},
+					#{branchNo},
+					#{memberCodeNo},
+					#{memberUsageStatusCodeNo}
+				)
+	</insert>
+	
+	<select id="selectUserList" resultMap="UserSelectMap">  
+		SELECT	USER_ID,
+				EMPLOYEE_NO,
+				PASSWORD,
+				BRANCH_NO,
+				MEMBER_CODE_NO,
+				CODE_FUNCTION('member', MEMBER_CODE_NO) AS MEMBER_CODE_NAME
+		  FROM	users
+	</select>
+	
+
+</mapper>

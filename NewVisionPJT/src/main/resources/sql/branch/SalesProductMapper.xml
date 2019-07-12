@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="SalesProductMapper">
+
+	<resultMap id="salesProductSelectMap" type="salesProduct">
+		<result property="salesNumbering" column="SALES_PRODUCT_NUMBERING" jdbcType="VARCHAR"/>
+		<result property="branchNo" column="BRANCH_NO" jdbcType="VARCHAR"/>		
+		<result property="salesDate" column="SALES_DATE" jdbcType="VARCHAR"/>
+		<result property="menuNo" column="MENU_NO" jdbcType="VARCHAR"/>
+		<result property="menuName" column="MENU_NAME" jdbcType="VARCHAR"/>
+		<result property="salesPrice" column="MENU_PRICE" jdbcType="VARCHAR"/>
+		<result property="salesAmount" column="SALES_AMOUNT" jdbcType="VARCHAR"/>
+		<result property="salesQuantity" column="SALES_QUANTITY" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<resultMap id="branchDailySalesSelectMap" type="branchDailySales">
+		<result property="branchNo" column="BRANCH_NO" jdbcType="VARCHAR"/>
+		<result property="salesDate" column="SALES_DATE" jdbcType="VARCHAR"/>
+		<result property="dailyTotalAmount" column="DAILY_TOTAL_AMOUNT" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<insert 	id="insertSalesProduct"		parameterType="salesProduct" >
+	 	INSERT
+		INTO sales_product
+		( 
+			SALES_PRODUCT_NUMBERING , 
+			BRANCH_NO , 
+			SALES_DATE , 
+			MENU_NO , 
+			SALES_AMOUNT, 
+			SALES_QUANTITY	 )
+		VALUES	 
+		(	
+			SEQ_SALES_PRODUCT_NUMBERING.NEXTVAL , 
+			#{branchNo} , 
+			#{salesDate} , 
+			#{menuNo} , 
+			#{salesAmount} , 
+			#{salesQuantity}	)
+	 </insert>
+	 
+	 <select id="selectDailySalesDetail"	parameterType="map"		resultMap="salesProductSelectMap">
+	 	SELECT
+			SALES_PRODUCT.SALES_PRODUCT_NUMBERING, 
+			SALES_MENU.MENU_NAME, 
+			SALES_MENU.MENU_PRICE, 
+			SALES_PRODUCT.SALES_QUANTITY, 
+			SALES_PRODUCT.SALES_AMOUNT, 
+			SALES_PRODUCT.SALES_DATE, 
+			SALES_PRODUCT.BRANCH_NO
+		FROM
+			SALES_MENU, SALES_PRODUCT
+		WHERE
+			SALES_PRODUCT.BRANCH_NO = #{branchNo}
+		AND
+			SALES_PRODUCT.SALES_DATE = #{salesDate}
+		AND
+			SALES_MENU.MENU_NO = SALES_PRODUCT.MENU_NO
+		ORDER BY
+			SALES_PRODUCT.MENU_NO ASC
+	 </select>
+	 
+	 <update id="updateSalesProduct"	parameterType="salesProduct">
+	 	UPDATE	sales_product
+	 	<set>
+	 		SALES_QUANTITY = #{salesQuantity},
+	 		SALES_AMOUNT = #{salesAmount},
+	 		SALES_DATE = #{salesDate}
+	 	</set>
+	 	WHERE	BRANCH_NO = #{branchNo}
+	 	
+	 </update>
+	 
+	 <select id="selectBranchDailySalesList"	parameterType="string"	resultMap="branchDailySalesSelectMap">
+	 	SELECT	SUM(SALES_AMOUNT) DAILY_TOTAL_AMOUNT, SALES_DATE
+	 	FROM	SALES_PRODUCT
+		WHERE	BRANCH_NO = #{value}
+		GROUP BY SALES_DATE
+		ORDER BY SALES_DATE DESC
+	 </select>	 	 
+
+</mapper>

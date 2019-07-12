@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		
+<mapper namespace="WorkAttitudeMapper">
+
+	<resultMap id="WorkAttitudeSelectMap" type="workAttitude" >
+		<result property="workAttitudeNo" column="WORK_ATTITUDE_NO" jdbcType="VARCHAR"/>
+		<result property="employeeNo" column="EMPLOYEE_NO" jdbcType="VARCHAR"/>
+		<result property="employeeName" column="EMPLOYEE_NAME" jdbcType="VARCHAR"/>
+		<result property="workAttitudeCodeNo" column="WORK_ATTITUDE_CODE" jdbcType="VARCHAR"/>
+		<result property="workAttitudeCodeName" column="WORK_ATTITUDE_CODE_NAME" jdbcType="VARCHAR"/>
+		<result property="workAttitudeTime" column="WORK_ATTITUDE_TIME" jdbcType="VARCHAR"/>
+		<result property="workAttitudeDate" column="WORK_ATTITUDE_DATE" jdbcType="VARCHAR"/>
+		<result property="usageStatusCodeNo" column="USAGE_STATUS_CODE_NO" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<insert id="insertWorkAttitude" parameterType="workAttitude">
+		INSERT
+		  INTO	WORK_ATTITUDE
+		  			(
+		  			WORK_ATTITUDE_NO
+		  		,	EMPLOYEE_NO
+		  		,	WORK_ATTITUDE_CODE
+		  		,	WORK_ATTITUDE_TIME
+		  		,	WORK_ATTITUDE_DATE
+		  		,	USAGE_STATUS_CODE_NO
+		  			)
+		VALUES
+					(
+					SEQ_WORK_ATTITUDE_NO.NEXTVAL
+				,	#{employeeNo}
+				,	#{workAttitudeCodeNo}
+				,	#{workAttitudeTime}
+				,	#{workAttitudeDate}
+				,	#{usageStatusCodeNo}
+					)
+	</insert>
+	
+	<select id="selectWorkAttitudeList" parameterType="search" resultMap="WorkAttitudeSelectMap">
+	   SELECT	vt.*
+		 FROM
+				(SELECT	 w.WORK_ATTITUDE_NO
+					 ,	w.EMPLOYEE_NO
+					 ,	hr.EMPLOYEE_NAME
+					 ,	w.WORK_ATTITUDE_CODE
+					 ,	c.WORK_ATTITUDE_CODE_NAME
+					 ,	w.WORK_ATTITUDE_TIME
+					 ,	w.WORK_ATTITUDE_DATE
+				  FROM	HUMAN_RESOURCE_CARD hr
+					 ,	WORK_ATTITUDE w	
+					 ,	WORK_ATTITUDE_CODE c
+             
+			     where
+			   			w.WORK_ATTITUDE_CODE	=	c.WORK_ATTITUDE_CODE
+			   	   AND	w.EMPLOYEE_NO       	=   hr.EMPLOYEE_NO
+			   	 ) vt
+		<where>
+			<if test="searchKeyword != null">
+						vt.EMPLOYEE_NAME    LIKE ('%'||#{searchKeyword}||'%')
+             	  OR	vt.EMPLOYEE_NO		LIKE ('%'||#{searchKeyword}||'%')
+			</if>
+		</where>
+	</select>
+	
+	<update id="updateWorkAttitude" parameterType="workAttitude">
+		UPDATE	WORK_ATTITUDE
+		   SET	
+		   		WORK_ATTITUDE_CODE	=	#{workAttitudeCodeNo}
+		   	 ,	WORK_ATTITUDE_TIME	=	#{workAttitudeTime}
+		   	 ,	WORK_ATTITUDE_DATE	=	#{workAttitudeDate}
+	   <where>	
+	  			WORK_ATTITUDE_NO	=	#{workAttitudeNo}
+	   </where>
+	</update>
+	
+	<update id="updateWorkAttitudeUsageStatus" parameterType="map">
+		UPDATE	WORK_ATTITUDE
+		   SET	USAGE_STATUS_CODE_NO	=	#{usageStatus}
+	   <where>
+	   			WORK_ATTITUDE_NO		=	#{workAttitudeNo}
+	   </where>
+	</update>
+
+</mapper>

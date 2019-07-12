@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="StatementMapper">
+
+	<resultMap type="statement" id="statementSelectMap">
+		<result property="statementNo" 					column="statement_no" 					jdbcType="VARCHAR"/>
+		<result property="tradeTargetName" 				column="trade_target_name" 				jdbcType="VARCHAR"/>
+		<result property="tradeDate" 					column="trade_date" 					jdbcType="VARCHAR"/>
+		<result property="accountNo" 					column="account_no" 					jdbcType="VARCHAR"/>
+		<result property="tradeAmount" 					column="trade_amount" 					jdbcType="VARCHAR"/>
+		<result property="statementCategoryCodeNo" 		column="statement_category_code_no" 	jdbcType="VARCHAR"/>
+		<result property="statementCategoryCodeName" 	column="statement_category_code_name" 	jdbcType="VARCHAR"/>
+		<result property="statementUsageStatusCodeNo" 	column="usage_status_code_no" 			jdbcType="VARCHAR"/>
+		<result property="statementDetail" 				column="statement_detail" 				jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<insert id="insertStatement" parameterType="statement">
+		INSERT 
+		INTO statement ( 
+			statement_no, 
+			trade_target_name, 
+			trade_date, 
+			account_no, 
+			trade_amount,
+			statement_category_code_no, 
+			usage_status_code_no,
+			statement_detail
+		) 
+		VALUES ( 
+			seq_statement_no.NEXTVAL,
+			#{tradeTargetName},
+			#{tradeDate},
+			#{accountNo},
+			#{tradeAmount},
+			#{statementCategoryCodeNo},
+			'01',
+			#{statementDetail}
+		)
+	</insert>
+	
+	<select id="selectStatementDetail" parameterType="string" resultMap="statementSelectMap">
+		SELECT 
+			statement_no,
+			trade_target_name,
+			trade_date,
+			account_no,
+			trade_amount,
+			statement_category_code_no,
+			CODE_FUNCTION('statement', statement_category_code_no) AS statement_category_code_name,
+			statement_detail
+		FROM
+			statement
+		WHERE
+			statement_no = #{value}
+	</select>
+	
+	<update id="updateStatement" parameterType="statement">
+		UPDATE statement
+			<set>
+				trade_target_name = #{tradeTargetName},
+				trade_date = #{tradeDate},
+				account_no = #{accountNo},
+				trade_amount = #{tradeAmount},
+				statement_category_code_no = #{statementCategoryCodeNo},
+				statement_detail = #{statementDetail}
+			</set>
+		WHERE statement_no = #{statementNo}
+	</update>
+	
+	<update id="updateStatementUsageStatus" parameterType="statement">
+		UPDATE statement
+			<set>
+				usage_status_code_no = #{statementUsageStatusCodeNo}
+			</set>
+		WHERE statement_no = #{statementNo}
+	</update>
+	
+	<select id="selectStatementList" parameterType="search" resultMap="statementSelectMap">
+		SELECT
+			statement_no,
+			trade_date,
+			trade_amount,
+			CODE_FUNCTION('statement', statement_category_code_no) AS statement_category_code_name
+		FROM
+			statement
+		<where>
+			<choose>
+				<when test="searchCondition != null and searchCondition !=''">
+					statement_category_code_no = #{searchCondition}
+				</when>
+				<when test="usageCondition != null and usageCondition !=''">
+					AND	usage_status_code_no = #{usageCondition}
+				</when>
+				<when test="minDate != null and maxDate != null and minDate != '' and maxDate != ''">
+					AND	trade_date BETWEEN #{minDate} AND #{maxDate}
+				</when>
+				<when test="maxDate != null and maxDate !=''">
+					AND	trade_date <![CDATA[ <= ]]> #{maxDate}
+				</when>
+				<when test="minDate != null and minDate !=''">
+					AND	trade_date <![CDATA[ >= ]]> #{minDate}
+				</when>
+			</choose>
+		</where>
+		ORDER BY statement_no ASC
+	</select>
+	
+</mapper>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		
+<mapper namespace="CommuteMapper">
+
+	<resultMap id="CommuteSelectMap" type="commute" >
+		<result property="employeeNo" column="EMPLOYEE_NO" jdbcType="VARCHAR"/>
+		<result property="goToWorkTime" column="GO_TO_WORK_TIME" jdbcType="DATE"/>
+		<result property="leaveWorkTime" column="LEAVE_WORK_TIME" jdbcType="DATE"/>
+		<result property="commuteDate" column="COMMUTE_DATE" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<resultMap id="DutyHoursSelectMap" type="dutyHours" >
+		<result property="employeeNo" column="EMPLOYEE_NO" jdbcType="VARCHAR"/>
+		<result property="regularWorkTime" column="REGULAR_WORK_TIME" jdbcType="VARCHAR"/>
+		<result property="extendWorkTime" column="EXTENDS_WORK_TIME" jdbcType="VARCHAR"/>
+		<result property="workDate" column="WORK_DATE" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	
+	<insert id="insertCommute" parameterType="commute">
+		INSERT
+		  INTO	COMMUTE
+		  			(
+		  			COMMUTE_NUMBERING
+		  		,	EMPLOYEE_NO
+		  		,	GO_TO_WORK_TIME
+		  		,	COMMUTE_DATE
+		  			)
+		VALUES	
+					(
+					SEQ_COMMUTE_NUMBERING.NEXTVAL
+				,	#{employeeNo}
+				,	to_date(#{goToWorkTime},'YYYY/MM/DD hh24:mi:ss')
+				,	to_char(sysdate,'YYYY/MM/DD')
+					)
+	</insert>
+	
+	<select id="selectCommuteList" parameterType="int" resultMap="CommuteSelectMap">
+		SELECT	EMPLOYEE_NO
+			 ,	GO_TO_WORK_TIME
+			 ,	LEAVE_WORK_TIME
+			 ,	COMMUTE_DATE
+		  FROM	COMMUTE
+		 WHERE	EMPLOYEE_NO	=	#{value}
+	</select>
+	
+	<update id="updateCommuteForLeaveWorkTime" parameterType="commute">
+		UPDATE	COMMUTE
+		   SET	LEAVE_WORK_TIME	=	to_date(#{leaveWorkTime},'YYYY/MM/DD hh24:mi:ss')
+		 WHERE	EMPLOYEE_NO		=	#{employeeNo}
+		   AND	COMMUTE_DATE	=	#{commuteDate}
+	</update>
+	
+	<!-- DutyHours -->
+	<insert id="insertDutyHours" parameterType="dutyHours">
+		INSERT
+		  INTO	DUTY_HOURS
+		  			(
+		  			DUTY_HOURS_NUMBERING
+		  		,	EMPLOYEE_NO
+		  		,	REGULAR_WORK_TIME
+		  		,	EXTENDS_WORK_TIME
+		  		,	WORK_DATE
+		  			)
+		VALUES	
+					(
+					SEQ_DUTY_HOURS_NUMBERING.NEXTVAL
+				,	#{employeeNo}
+				,	#{regularWorkTime}
+				,	#{extendWorkTime}
+				,	#{workDate}
+					)
+	</insert>
+
+</mapper>
