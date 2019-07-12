@@ -30,36 +30,36 @@ public class ApprovalServiceImpl implements ApprovalService {
 		// TODO Auto-generated constructor stub
 	}
 
-	////////////////////////ï¿½ï¿½ï¿½ç¼­/////////////////////////////
-	//ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	////////////////////////°áÀç¼­/////////////////////////////
+	//°áÀç¾ç½Ä¸ñ·Ï °¡Á®¿À±â
 	@Override
 	public List<ApprovalForm> getApprovalFormList() throws Exception {
 		// TODO Auto-generated method stub
 		return approvalDAO.selectApprovalFormList();
 	}
 
-	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½
+	//°áÀç¾ç½Ä µî·Ï, º¹Á¦ÇÏ±â
 	@Override
 	public void addApprovalForm(ApprovalForm approvalForm) throws Exception {
 		// TODO Auto-generated method stub
 		approvalDAO.insertApprovalForm(approvalForm);
 	}
 
-	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½
+	//°áÀç¾ç½Ä ¼öÁ¤ÇÏ±â
 	@Override
 	public void modifyApprovalForm(ApprovalForm approvalForm) throws Exception {
 		// TODO Auto-generated method stub
 		approvalDAO.updateApprovalForm(approvalForm);
 	}
 
-	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ó¼¼ºï¿½ï¿½ï¿½
+	//°áÀç¾ç½Ä »ó¼¼º¸±â
 	@Override
 	public ApprovalForm getApprovalFormDetail(String approvalFormNo) throws Exception {
 		// TODO Auto-generated method stub
 		return approvalDAO.selectApprovalFormDetail(approvalFormNo);
 	}
 
-	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½(ï¿½ï¿½ï¿½ç¼­ï¿½ï¿½Ä¹ï¿½È£, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ ï¿½Ê¿ï¿½)
+	//°áÀç¾ç½Ä »èÁ¦ÇÏ±â(°áÀç¼­¾ç½Ä¹øÈ£, »ç¿ë»óÅÂÄÚµå ÇÊ¿ä)
 	@Override
 	public void convertApprovalFrom(ApprovalForm approvalForm) throws Exception {
 		// TODO Auto-generated method stub
@@ -67,82 +67,82 @@ public class ApprovalServiceImpl implements ApprovalService {
 	}
 
 
-	///////////////////////ï¿½ï¿½ï¿½ï¿½///////////////////////////////
-	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï±ï¿½
+	///////////////////////°áÀç///////////////////////////////
+	//°áÀç µî·ÏÇÏ±â
 	@Override
 	public void addApproval(Approval approval) throws Exception {
 		// TODO Auto-generated method stub
-		//ï¿½ï¿½ï¿½ç¼­ ï¿½ï¿½ï¿½ï¿½Ï±ï¿½
+		//°áÀç¼­ µî·ÏÇÏ±â
 		approvalDAO.insertApproval(approval);
 		System.out.println("ApprovalServiceImpl.addApproval() : "+approval);
 		
-		//selectkeyï¿½ï¿½ ï¿½ï¿½ï¿½ç¼­ï¿½ï¿½È£ ï¿½Þ¾Æ¿ï¿½
+		//selectkey·Î °áÀç¼­¹øÈ£ ¹Þ¾Æ¿È
 		String approvalNo = approval.getApprovalNo();
 		
-		//ï¿½ï¿½ï¿½ç¼­ ï¿½ï¿½È£ï¿½ï¿½ ï¿½Â´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï±ï¿½, È­ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ordinal ï¿½ï¿½ ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½Ï±ï¿½
-		//1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+		//°áÀç¼­ ¹øÈ£¿¡ ¸Â´Â °áÀçÀÚ µî·ÏÇÏ±â, È­¸é°ú ¿¬°á½Ã ordinal Àß µé¾î¿Ô´ÂÁö È®ÀÎÇÏ±â
+		//1Â÷°áÀçÀÚ µî·Ï
 		//approvalDAO.insertApprover(approval.getFirstApprover().setApprovalNo(approvalNo));
 		approvalDAO.insertApprover(getFullApprover(approval.getFirstApprover(), approvalNo));
-		//2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+		//2Â÷°áÀçÀÚ µî·Ï
 		switch(approval.getTotalApproverCount()) {
 		case "2" :	case "3" :	case "4" :	case "5" :
 			approvalDAO.insertApprover(getFullApprover(approval.getSecondApprover(), approvalNo));
 		}
-		//3ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+		//3Â÷°áÀçÀÚ µî·Ï
 		switch(approval.getTotalApproverCount()) {
 		case "3" :	case "4" :	case "5" :
 			approvalDAO.insertApprover(getFullApprover(approval.getThirdApprover(), approvalNo));
 		}
-		//4ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+		//4Â÷°áÀçÀÚ µî·Ï
 		switch(approval.getTotalApproverCount()) {
 		case "4" :	case "5" :
 			approvalDAO.insertApprover(getFullApprover(approval.getFourthApprover(), approvalNo));
 		}
-		//5ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+		//5Â÷°áÀçÀÚ µî·Ï
 		switch(approval.getTotalApproverCount()) {
 		case "5" :
 			approvalDAO.insertApprover(getFullApprover(approval.getFifthApprover(), approvalNo));
 		}
 		
-		//ï¿½ï¿½ï¿½ç¼­ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½È½ï¿½ï¿½ ï¿½Ã¸ï¿½ï¿½ï¿½
+		//°áÀç¼­¾ç½Ä »ç¿ëÈ½¼ö ¿Ã¸®±â
 		approvalDAO.updateApprovalFormUseCount(approval.getApprovalFormNo());
 	}
 
-	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, SearchConditionï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½Ý·ï¿½, ï¿½Ï·ï¿½, ï¿½ï¿½ï¿½/ SearchKeywordï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½È£ ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½Ï±ï¿½
+	//°áÀç¸ñ·Ï °¡Á®¿À±â, SearchCondition¿¡´Â ÁøÇà, ¹Ý·Á, ¿Ï·á, ´ë±â/ SearchKeyword¿¡´Â »ç¿ø¹øÈ£ µé¾î¿ÍÀÖ´ÂÁö È®ÀÎÇÏ±â
 	@Override
 	public List<Approval> getApprovalList(Search search) throws Exception {
 		// TODO Auto-generated method stub
 		return approvalDAO.selectApprovalList(search);
 	}
 
-	//ï¿½ï¿½ï¿½ï¿½ ï¿½ó¼¼ºï¿½ï¿½ï¿½
+	//°áÀç »ó¼¼º¸±â
 	@Override
 	public Approval getApprovalDetail(String approvalNo) throws Exception {
 		// TODO Auto-generated method stub
-		//ï¿½ï¿½ï¿½ç¼­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		//°áÀç¼­ ²®µ¥±â °¡Á®¿À±â
 		Approval approval = approvalDAO.selectApprovalDetail(approvalNo);
 		
-		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½ï¿½
+		//°áÀçÀÚ Ã¤¿ì±â
 		List<Approver> list = approvalDAO.selectApproverList(approvalNo);
 		String listSize = ""+list.size();
-		//1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½ï¿½
+		//1Â÷°áÀçÀÚ Ã¤¿ì±â
 		approval.setFirstApprover(list.get(0));
-		//2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½ï¿½
+		//2Â÷°áÀçÀÚ Ã¤¿ì±â
 		switch(listSize) {
 		case "2" :	case "3" :	case "4" :	case "5" :
 			approval.setSecondApprover(list.get(1));
 		}
-		//3ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½ï¿½
+		//3Â÷°áÀçÀÚ Ã¤¿ì±â
 		switch(listSize) {
 		case "3" :	case "4" :	case "5" :
 			approval.setThirdApprover(list.get(2));
 		}
-		//4ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½ï¿½
+		//4Â÷°áÀçÀÚ Ã¤¿ì±â
 		switch(listSize) {
 		case "4" :	case "5" :
 			approval.setFourthApprover(list.get(3));
 		}
-		//5ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½ï¿½
+		//5Â÷°áÀçÀÚ Ã¤¿ì±â
 		switch(listSize) {
 		case "5" :
 			approval.setFifthApprover(list.get(4));
@@ -151,32 +151,32 @@ public class ApprovalServiceImpl implements ApprovalService {
 		return approval;
 	}
 
-	//ï¿½ï¿½ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½ï¿½ï¿½ï¿½/ï¿½Ý·ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ç¼­ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½
-	//ï¿½ï¿½ï¿½ç¼­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ú±ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½
+	//°áÀçÀÚ°¡ ½ÂÀÎ/¹Ý·ÁÇÏ°í °áÀç¼­»óÅÂ º¯°æÇÏ±â
+	//°áÀç¼­¿¡ °áÀçÀÚ±îÁö Ã¤¿öÁ®ÀÖ¾î¾ßÇÔ
 	@Override
 	public void modifyApprovalStatus(Approval approval, String employeeNo, String approvalOrReturn) throws Exception {
 		// TODO Auto-generated method stub
-		//ï¿½ï¿½ï¿½ï¿½ï¿½È£ï¿½ï¿½ ï¿½Ø´ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ë¾Æ³ï¿½ï¿½ï¿½
+		//»ç¿ø¹øÈ£¿¡ ÇØ´çÇÏ´Â »ç¿øÀÌ ¸î Â÷ °áÀçÀÚÀÎÁö ¾Ë¾Æ³»±â
 		Approver approver = findApprover(approval, employeeNo);
 		
-		//ï¿½ï¿½ï¿½ç¼­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ updateï¿½Ï±ï¿½
+		//°áÀç¼­¿¡ ´ëÇÑ °³ÀÎÀÇ °áÀç»óÅÂ updateÇÏ±â
 		approvalDAO.updateApproverStatus(approver.setApprovalStatus("1"));
 		
 		if(approvalOrReturn.equals("return")) {
 			
-			//ï¿½Ý·ï¿½ï¿½Ï¶ï¿½ ï¿½ï¿½ï¿½ç¼­ï¿½ï¿½ï¿½Âºï¿½ï¿½ï¿½ï¿½Ï±ï¿½(ï¿½ï¿½ï¿½ï¿½2, ï¿½Ý·ï¿½3, ï¿½Ï·ï¿½4)
+			//¹Ý·ÁÀÏ¶§ °áÀç¼­»óÅÂº¯°æÇÏ±â(ÁøÇà2, ¹Ý·Á3, ¿Ï·á4)
 			approval.setApprovalStatusCodeNo("03");
 			approvalDAO.updateApprovalStatus(approval);
 			
 		}else if(approvalOrReturn.equals("approval")) {
 
-			//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ç¼­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½Ï±ï¿½
+			//½ÂÀÎ ½Ã °áÀç¼­ ½ÂÀÎÇÑ »ç¶÷ ¼ö ¾÷µ¥ÀÌÆ®ÇÏ±â
 			approvalDAO.updateApproverCountFromApproval(approval.getApprovalNo());
 			
-			//ï¿½ï¿½ï¿½Î½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½Ï±ï¿½
+			//½ÂÀÎ½Ã °áÀç¿Ï·áÀÎÁö È®ÀÎÇÏ±â
 			boolean complete = approvalDAO.isApprovalEnd(approval.getApprovalNo());
 			if(complete) {
-				//ï¿½Ï·ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ç¼­ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½(ï¿½ï¿½ï¿½ï¿½2, ï¿½Ý·ï¿½3, ï¿½Ï·ï¿½4)
+				//¿Ï·áÀÏ ¶§ °áÀç¼­ »óÅÂ º¯°æÇÏ±â(ÁøÇà2, ¹Ý·Á3, ¿Ï·á4)
 				approval.setApprovalStatusCodeNo("04");
 				approvalDAO.updateApprovalStatus(approval);
 				
@@ -184,7 +184,7 @@ public class ApprovalServiceImpl implements ApprovalService {
 		}
 	}
 
-	//ï¿½ï¿½ï¿½ï¿½ï¿½È£ï¿½ï¿½ ï¿½Ø´ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ë¾Æ³ï¿½ï¿½ï¿½
+	//»ç¿ø¹øÈ£¿¡ ÇØ´çÇÏ´Â »ç¿øÀÌ ¸î Â÷ °áÀçÀÚÀÎÁö ¾Ë¾Æ³»±â
 	public Approver findApprover(Approval approval, String employeeNo) throws Exception{
 		
 		if(employeeNo.equals(approval.getFirstApprover().getEmployeeNo())){
@@ -202,11 +202,11 @@ public class ApprovalServiceImpl implements ApprovalService {
 		return null;
 	}
 	
-	//ï¿½ï¿½ï¿½ï¿½ï¿½È£ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½Þ¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	//»ç¿ø¹øÈ£·Î »ç¿øµµÀå, Á÷±Þ¸í °¡Á®¿À±â
 	public Approver getFullApprover(Approver approver, String approvalNo) throws Exception {
-		System.out.println("ApprovalServiceImpl.getFullApprover() ï¿½ï¿½ï¿½ï¿½ï¿½È£ : "+Integer.parseInt(approver.getEmployeeNo()));
-		SimpleHumanResourceCard shrc = humanResourceDAO.selectSimpleHumanResourceCardByEmployeeNo(Integer.parseInt(approver.getEmployeeNo()));
-		System.out.println("ApprovalServiceImpl.getFullApprover() ï¿½Î»ï¿½Ä«ï¿½ï¿½ : "+shrc);
+		System.out.println("ApprovalServiceImpl.getFullApprover() »ç¿ø¹øÈ£ : "+Integer.parseInt(approver.getEmployeeNo()));
+		SimpleHumanResourceCard shrc = humanResourceDAO.selectSimpleHumanResourceCardByEmployeeNo(approver.getEmployeeNo());
+		System.out.println("ApprovalServiceImpl.getFullApprover() ÀÎ»çÄ«µå : "+shrc);
 		approver.setEmployeeRankCodeName(shrc.getRankCodeName());
 		approver.setEmployeeSignatureImage(shrc.getSignatureImage());
 		

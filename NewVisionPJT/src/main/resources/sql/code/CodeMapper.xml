@@ -15,28 +15,60 @@
 	</resultMap>
 	
 	<!-- 그룹코드 리스트 가져오기 -->
-	<select 	id="selectGroupCodeList" resultMap="codeSelectMap">
+	<select 	id="selectGroupCodeList" parameterType="search" resultMap="codeSelectMap">
 		SELECT
-		group_code, group_code_name, code_no, code_name, code_usage_status		
+		DISTINCT group_code, group_code_name, code_usage_status		
 		FROM code
-		WHERE code_usage_status = 'Y'
-		ORDER BY group_code ASC, code_no ASC
+		<where>
+			code_usage_status = 'Y' 
+			<if test="searchKeyword!=null">
+		AND group_code=#{searchKeyword}
+			</if>
+		</where>
+		
+		ORDER BY group_code_name ASC
 	 </select>
 	 
 	 <!-- 코드 등록하기 -->
 	 <insert 	id="insertCode"		parameterType="code" >
 	 	INSERT
-		INTO code(code_numbering, group_code, group_code_name, code_no, code_name, code_usage_status) 
-		VALUES	 (	seq_code_numbering.nextval, #{groupCode} , #{groupCodeName}, #{codeNo}, #{codeName}, 'Y' )
+			INTO code
+			  (
+			  		code_numbering, group_code
+			  	, 	group_code_name
+			  	, 	code_no
+			  	, 	code_name
+			  	, 	code_usage_status
+			  ) 
+		VALUES	 
+			  (	
+			  		seq_code_numbering.nextval
+			  	, 	#{groupCode} 
+			  	, 	#{groupCodeName}
+			  	, 	#{codeNo}
+			  	, 	#{codeName}
+			  	, 	'Y' 
+			  )
 	 </insert>
 	 
 	 
 	 <!-- 코드 리스트 가져오기 -->
 	 <select 	id="selectCodeList"	parameterType="search"	resultMap="codeSelectMap">
-		SELECT
-		group_code, group_code_name, code_no, code_name, code_usage_status	
+		SELECT 	group_code
+			 , 	group_code_name
+			 ,  code_no
+			 ,  code_name
+			 ,  code_usage_status	
 		FROM code 
-		WHERE code_usage_status = 'Y' AND group_code = #{searchKeyword}
+		<where>
+			<if test="searchCondition==0">
+				code_usage_status = 'Y' 
+			</if>
+			<if test="searchCondigion==1">
+				code_usage_status = 'N'
+			</if>
+			AND group_code = #{searchKeyword}
+		</where>
 		ORDER BY code_no ASC
 	 </select>
 	 
@@ -46,14 +78,48 @@
 	   	<set>
 	   		code_name = #{codeName}
 	   	</set>
-	   	WHERE group_code = #{groupCode} AND code_no = #{codeNo}
+	   	<where>
+	   	 	group_code = #{groupCode} 
+	   	AND code_no = #{codeNo}
+	   	</where>
 	 </update>
 	 
 	 <!-- 코드명 중복확인 -->
 	 <select 	id="selectDuplicateCodeNo"	parameterType="code"	resultMap="codeSelectMap">
-		SELECT
-		group_code, group_code_name, code_no, code_name, code_usage_status	
+		SELECT	group_code
+			, 	group_code_name
+			, 	code_no
+			, 	code_name
+			, 	code_usage_status	
 		FROM code 
-		WHERE code_usage_status = 'Y' AND group_code = #{groupCode} AND code_name = #{codeName}
+		<where>
+				code_usage_status = 'Y' 
+			AND group_code = #{groupCode} 
+			AND code_name = #{codeName}
+		</where>
 	 </select>
+	 
+	 <!-- 가장최근코드번호 가져오기 -->
+	 <select 	id="selectLatestCodeNo"	parameterType="string"	resultMap="codeSelectMap">
+		SELECT	group_code
+			,	group_code_name
+			, 	MAX(code_no)
+		FROM code 
+		<where>
+				group_code = #{value} 
+		</where>
+        GROUP BY group_Code, group_Code_name
+	 </select>
+	 
+	 <!-- 코드 삭제, 복구 -->
+	 <update	id="updateCodeUsageStatus" parameterType="code" >
+	   	UPDATE code
+	   	<set>
+	   		code_usage_status = #{codeUsageStatus}
+	   	</set>
+	   	<where>
+	   	 	group_code = #{groupCode} 
+	   	AND code_no = #{codeNo}
+	   	</where>
+	 </update>
 </mapper>

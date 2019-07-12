@@ -17,12 +17,15 @@ public interface ProductionManagementDAOcodms {
 	public int updateOrderFromBranchStatus(OrderFromBranch orderFromBranch) throws Exception;
 	
 	//[본사, 지점]주문서리스트 가져오기(주문물품 채워서) 지점번호 searchKeyword에 채우기
-	public List<OrderFromBranch> selectOrderFromBranch(Search search) throws Exception;
+	public List<OrderFromBranch> selectOrderFromBranchList(Search search) throws Exception;
+	
+	//[본사, 지점]주문서 상세보기
+	public OrderFromBranch selectOrderFromBranchDetail(Search search) throws Exception;
 	
 	//[본사]주문물품 상태변경(출하완료, 출하대기, 출하취소)
 	public int updateOrderFromBranchProductStatus(OrderFromBranchProduct orderFromBranchProduct) throws Exception;
 	
 	//[본사]주문물품 모두 출하완료인지 확인, 출하대기인 상품개수 return
-	public int selectOrderFromBranchProduct(OrderFromBranch orderFromBranch) throws Exception;
+	public int selectOrderFromBranchProduct(String orderFromBranchNo) throws Exception;
 	
 }

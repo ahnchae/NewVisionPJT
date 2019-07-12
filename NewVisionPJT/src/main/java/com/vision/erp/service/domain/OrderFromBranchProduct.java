@@ -77,8 +77,9 @@ public class OrderFromBranchProduct {
 		return orderFromBranchNo;
 	}
 
-	public void setOrderFromBranchNo(String orderFromBranchNo) {
+	public OrderFromBranchProduct setOrderFromBranchNo(String orderFromBranchNo) {
 		this.orderFromBranchNo = orderFromBranchNo;
+		return this;
 	}
 
 	public String getOrderFromBranchProductQuantity() {

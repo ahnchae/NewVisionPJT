@@ -100,6 +100,11 @@
 				,	#{resignation}
 				,	#{account.accountRegNo}
 					)
+					
+		<selectKey keyProperty="employeeNo" resultType="string" order="AFTER">
+			SELECT	SEQ_EMPLOYEE_NO.CURRVAL
+			  FROM	DUAL;
+		</selectKey>
 	</insert>
 	
 	<select id="selectHumanResourceCardList" parameterType="search" resultMap="HumanResourceCardSelectMap">  

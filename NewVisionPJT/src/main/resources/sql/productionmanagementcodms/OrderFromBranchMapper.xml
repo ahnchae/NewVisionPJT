@@ -7,25 +7,27 @@
 <mapper namespace="OrderFromBranchMapper">
  		
 	<resultMap id="orderFromBranchSelectMap" type="orderFromBranch">
-		<result property="statementNo" 			column="STATEMENT_NO" 			jdbcType="VARCHAR"/>
-		<result property="orderFromBranchNo"	column="ORDER_FROM_BRANCH_NO" 		jdbcType="VARCHAR" />
-		<result property="orderFromBranchStatusCodeNo" 	column="ORDER_BRANCH_STATUS_CODE" 		jdbcType="VARCHAR" />
-		<result property="orderFromBranchStatusCodeName" 				column="BRANCH_STATUS_CODE_NAME" 					jdbcType="VARCHAR" />
-		<result property="orderFromBranchTotalAmount" 				column="TOTAL_ORDER_AMOUNT" 					jdbcType="VARCHAR" />
-		<result property="branchName" 				column="fnc_BRANCH_Name" 					jdbcType="VARCHAR" />
-		<result property="branchNo" 				column="BRANCH_NO" 					jdbcType="VARCHAR" />
-		<result property="orderDate" 				column="ORDER_DATE" 					jdbcType="VARCHAR" />
+		<result property="statementNo" column="STATEMENT_NO" jdbcType="VARCHAR"/>
+		<result property="orderFromBranchNo" column="ORDER_FROM_BRANCH_NO" jdbcType="VARCHAR" />
+		<result property="orderFromBranchStatusCodeNo" column="ORDER_BRANCH_STATUS_CODE" jdbcType="VARCHAR" />
+		<result property="orderFromBranchStatusCodeName" column="BRANCH_STATUS_CODE_NAME" jdbcType="VARCHAR" />
+		<result property="orderFromBranchTotalAmount" column="TOTAL_ORDER_AMOUNT" jdbcType="VARCHAR" />
+		<result property="branchName" column="fnc_BRANCH_Name" jdbcType="VARCHAR" />
+		<result property="branchNo" column="BRANCH_NO" jdbcType="VARCHAR" />
+		<result property="orderDate" column="ORDER_DATE" jdbcType="VARCHAR" />
+	   
 	    <collection property="orderFromBranchProductList" ofType="orderFromBranchProduct">
-	      <result property="numbering" column="ORDER_BRANCH_PRODUCT_NUMBERING"/>
-	      <result property="productNo" column="PRODUCT_NO"/>
-	      <result property="productName" column="PRODUCT_Name"/>
-	      <result property="price" column="sales_price"/>
-	      <result property="orderFromBranchProductStatusCodeNo" column="ORDER_BRANCH_PROD_STATUS_CODE"/>
-	      <result property="orderFromBranchProductStatusCodeName" column="ORDER_PROD_STATUS_NAME"/>
-	      <result property="orderFromBranchNo" column="ORDER_FROM_BRANCH_NO"/>
-	      <result property="orderFromBranchProductQuantity" column="ORDER_QUANTITY"/>
-	      <result property="orderFromBranchProductAmount" column="AMOUNT"/>
+	      <result property="numbering" column="ORDER_BRANCH_PRODUCT_NUMBERING" jdbcType="VARCHAR"/>
+	      <result property="productNo" column="PRODUCT_NO" jdbcType="VARCHAR"/>
+	      <result property="productName" column="PRODUCT_Name" jdbcType="VARCHAR"/>
+	      <result property="price" column="sales_price" jdbcType="VARCHAR"/>
+	      <result property="orderFromBranchProductStatusCodeNo" column="ORDER_BRANCH_PROD_STATUS_CODE" jdbcType="VARCHAR"/>
+	      <result property="orderFromBranchProductStatusCodeName" column="ORDER_PROD_STATUS_NAME" jdbcType="VARCHAR"/>
+	      <result property="orderFromBranchNo" column="ORDER_FROM_BRANCH_NO" jdbcType="VARCHAR"/>
+	      <result property="orderFromBranchProductQuantity" column="ORDER_QUANTITY" jdbcType="VARCHAR"/>
+	      <result property="orderFromBranchProductAmount" column="AMOUNT" jdbcType="VARCHAR"/>
 	    </collection>
+	    
 	</resultMap>
 	
 	<!-- [지점]주문요청-주문서등록 -->
@@ -34,15 +36,49 @@
 	    	select seq_order_from_branch_no.currval FROM DUAL
 	  	</selectKey>
 	 	INSERT
-		INTO order_from_branch( ORDER_FROM_BRANCH_NO,BRANCH_NO, STATEMENT_NO, ORDER_DATE, TOTAL_ORDER_AMOUNT, ORDER_BRANCH_STATUS_CODE) 
-		VALUES	 (	seq_order_from_branch_no.nextval, #{branchNo}, #{statementNo}, TO_CHAR(SYSDATE, 'YYYY/MM/DD'), #{orderFromBranchTotalAmount}, '01')
+			INTO order_from_branch
+					( 
+					order_from_branch_no
+				,	branch_no
+				,	statement_no
+				, 	order_date
+				, 	total_order_amount
+				,	order_branch_status_code
+					) 
+			VALUES	 
+					(
+					seq_order_from_branch_no.nextval
+				, 	#{branchNo}
+				, 	#{statementNo}
+				, 	TO_CHAR(SYSDATE, 'YYYY/MM/DD')
+				, 	#{orderFromBranchTotalAmount}
+				, 	'01'
+					)
 	</insert>
 	
 	<!-- [지점]주문요청-주문물품등록 -->
 	<insert 	id="insertOrderFromBranchProduct"		parameterType="orderFromBranchProduct" >
 	 	INSERT
-		INTO order_from_branch_product( ORDER_BRANCH_PRODUCT_NUMBERING, ORDER_FROM_BRANCH_NO, PRODUCT_NO, ORDER_QUANTITY, ORDER_PRICE, AMOUNT, ORDER_BRANCH_PROD_STATUS_CODE) 
-		VALUES	 (	seq_order_branch_prod.nextval, #{orderFromBranchNo}, #{productNo}, #{orderFromBranchProductQuantity}, #{price}, #{orderFromBranchProductAmount}, '01')
+			INTO order_from_branch_product
+				( 
+			  	  order_branch_product_numbering
+			  ,   order_from_branch_no
+			  ,   product_no
+			  ,   order_quantity
+			  ,   order_price
+			  ,   amount
+			  ,   order_branch_prod_status_code
+				) 
+		VALUES	 
+				(	
+				seq_order_branch_prod.nextval
+			, 	#{orderFromBranchNo}
+			, 	#{productNo}
+			,	#{orderFromBranchProductQuantity}
+			, 	#{price}
+			, 	#{orderFromBranchProductAmount}
+			, 	'01'
+				)
 	</insert>
 	 
 	<!-- [본사, 지점]주문서상태변경(주문취소요청, 주문취소확정, 주문완료) -->
@@ -56,14 +92,64 @@
 	
 	<!-- 주문서 리스트 가져오기(주문물품 채워서) 지점번호 searchKeyword에 채우기-->
 	<select 	id="selectOrderFromBranch"	parameterType="search"	resultMap="orderFromBranchSelectMap">
-		SELECT
-		ob.order_from_branch_no, ob.branch_no, ob.statement_no, ob.order_date, ob.total_order_amount, ob.order_branch_status_code, CODE_FUNCTION('orderBranch', order_branch_status_code)AS BRANCH_STATUS_CODE_NAME, BRANCH_NAME_FUNCTION(branch_no) AS fnc_branch_name,
-		 op.order_branch_product_numbering, op.order_from_branch_no, op.product_no, op.order_quantity, op.order_price, op.amount, op.order_branch_prod_status_code, CODE_FUNCTION('orderBranchItem', ORDER_BRANCH_PROD_STATUS_CODE)AS ORDER_PROD_STATUS_NAME, p.product_name 		
-		FROM order_from_branch ob, order_from_branch_product op, product p
-		WHERE ob.order_from_branch_no = op.order_from_branch_no(+) AND op.product_no = p.product_no(+)
+		SELECT ob.order_from_branch_no
+			 , ob.branch_no
+			 , ob.statement_no
+			 , ob.order_date
+			 , ob.total_order_amount
+			 , ob.order_branch_status_code
+			 , CODE_FUNCTION('orderBranch'
+			 , order_branch_status_code)AS BRANCH_STATUS_CODE_NAME
+			 , BRANCH_NAME_FUNCTION(branch_no) AS fnc_branch_name
+			 , op.order_branch_product_numbering
+			 , op.order_from_branch_no
+			 , op.product_no
+			 , op.order_quantity
+			 , op.order_price
+			 , op.amount
+			 , op.order_branch_prod_status_code
+			 , CODE_FUNCTION('orderBranchItem', ORDER_BRANCH_PROD_STATUS_CODE)AS ORDER_PROD_STATUS_NAME
+			 , p.product_name 		
+		FROM   order_from_branch ob
+			 , order_from_branch_product op
+			 , product p
+		<where>
+			 ob.order_from_branch_no = op.order_from_branch_no(+) 
+			 AND op.product_no = p.product_no(+)
 		<if test="searchKeyword!=null">
-			AND branch_no=#{searchKeyword}
+			 AND branch_no=#{searchKeyword}
 		</if>
+		</where>
+		ORDER BY ob.order_from_branch_no DESC
+	</select>
+	
+	<!-- 주문서 가져오기(주문물품 채워서) 주문서번호 searchKeyword에 채우기-->
+	<select 	id="selectOrderFromBranchDetail"	parameterType="search"	resultMap="orderFromBranchSelectMap">
+		SELECT ob.order_from_branch_no
+			 , ob.branch_no
+			 , ob.statement_no
+			 , ob.order_date
+			 , ob.total_order_amount
+			 , ob.order_branch_status_code
+			 , CODE_FUNCTION('orderBranch', order_branch_status_code)AS BRANCH_STATUS_CODE_NAME
+			 , BRANCH_NAME_FUNCTION(branch_no) AS fnc_branch_name
+			 , op.order_branch_product_numbering
+			 , op.order_from_branch_no
+			 , op.product_no
+			 , op.order_quantity
+			 , op.order_price
+			 , op.amount
+			 , op.order_branch_prod_status_code
+			 , CODE_FUNCTION('orderBranchItem', ORDER_BRANCH_PROD_STATUS_CODE)AS ORDER_PROD_STATUS_NAME
+			 , p.product_name 		
+		FROM   order_from_branch ob
+			 , order_from_branch_product op
+			 , product p
+		<where>
+			ob.order_from_branch_no = op.order_from_branch_no(+) 
+			AND op.product_no = p.product_no(+) 
+			AND ob.order_from_branch_no=#{searchKeyword}
+		</where>
 		ORDER BY ob.order_from_branch_no DESC
 	</select>
 	
@@ -71,17 +157,24 @@
 	<update	id="updateOrderFromBranchProductStatus" parameterType="orderFromBranchProduct" >
 	   	UPDATE order_from_branch_product
 	   	<set>
-	   		ORDER_BRANCH_PROD_STATUS_CODE = #{orderFromBranchProductStatusCodeNo}
+	   		order_branch_prod_status_code = #{orderFromBranchProductStatusCodeNo}
 	   	</set>
-	   	WHERE order_branch_product_numbering = #{numbering}
+	   	WHERE order_from_branch_no = #{orderFromBranchNo}
+	   		  AND product_no = #{productNo}
 	</update>
 
 	<!-- [본사]주문물품 모두 출하완료인지 확인, 출하대기인 상품개수 return -->
-	<select	id="selectOrderFromBranchProduct" parameterType="orderFromBranch" resultMap="orderFromBranchSelectMap" >
-		SELECT
-		op.order_branch_product_numbering, op.order_from_branch_no, op.product_no, op.order_quantity, op.order_price, op.amount, op.order_branch_prod_status_code 		
+	<select	id="selectOrderFromBranchProduct" parameterType="string" resultMap="orderFromBranchSelectMap" >
+		SELECT	op.order_branch_product_numbering
+			  , op.order_from_branch_no
+			  , op.product_no, op.order_quantity
+			  , op.order_price
+			  , op.amount
+			  , op.order_branch_prod_status_code 		
 		FROM order_from_branch_product op 
-		WHERE order_from_branch_no = #{orderFromBranchNo} AND order_branch_prod_status_code='01'
+		<where>
+			order_from_branch_no = #{value} AND order_branch_prod_status_code='01'
+		</where>
 	</select>
 	
 </mapper>

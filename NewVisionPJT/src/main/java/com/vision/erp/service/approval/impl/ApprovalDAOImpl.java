@@ -12,7 +12,6 @@ import com.vision.erp.service.approval.ApprovalDAO;
 import com.vision.erp.service.domain.Approval;
 import com.vision.erp.service.domain.ApprovalForm;
 import com.vision.erp.service.domain.Approver;
-import com.vision.erp.service.domain.SimpleHumanResourceCard;
 
 @Repository("approvalDAOImpl")
 public class ApprovalDAOImpl implements ApprovalDAO {

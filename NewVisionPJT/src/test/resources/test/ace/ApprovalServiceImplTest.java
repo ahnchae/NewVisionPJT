@@ -83,7 +83,7 @@ public class ApprovalServiceImplTest{
 		second.setEmployeeNo("1002");
 		Approver third = new Approver();
 		third.setOrdinal("2");
-		third.setEmployeeNo("1002");
+		third.setEmployeeNo("1000");
 		approval.setFirstApprover(first);
 		approval.setSecondApprover(second);
 		approval.setThirdApprover(third);
@@ -113,7 +113,7 @@ public class ApprovalServiceImplTest{
 	
 	//결재자가 승인/반려하고 결재서상태 변경하기
 	//결재서에 결재자까지 채워져있어야함
-	@Test
+	//@Test
 	public void modifyApprovalStatusTest() throws Exception{
 		Approval approval = approvalService.getApprovalDetail("10022");
 		approvalService.modifyApprovalStatus(approval, "1002", "approval");

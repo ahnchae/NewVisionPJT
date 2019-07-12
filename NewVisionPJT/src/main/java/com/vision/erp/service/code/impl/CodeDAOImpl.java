@@ -20,7 +20,7 @@ public class CodeDAOImpl implements CodeDAO {
 	
 	//그룹코드리스트 전체 가져오기
 	@Override
-	public List<Code> selectGroupCode() throws Exception {
+	public List<Code> selectGroupCodeList(Search search) throws Exception {
 		// TODO Auto-generated method stub
 		return sqlSession.selectList("CodeMapper.selectGroupCodeList");
 	}
@@ -32,7 +32,7 @@ public class CodeDAOImpl implements CodeDAO {
 		return sqlSession.insert("CodeMapper.insertCode", code);
 	}
 
-	//그룹코드에 해당하는 코드리스트 가져오기
+	//그룹코드에 해당하는 코드리스트 가져오기, searchKeyword = group_code, searchCondition=0=사용중/1=삭제
 	@Override
 	public List<Code> selectCodeList(Search search) throws Exception {
 		// TODO Auto-generated method stub
@@ -51,6 +51,20 @@ public class CodeDAOImpl implements CodeDAO {
 	public Code selectDuplicateCodeNo(Code code) throws Exception {
 		// TODO Auto-generated method stub
 		return sqlSession.selectOne("CodeMapper.selectDuplicateCodeNo", code);
+	}
+
+	//그룹코드 내에서 코드번호 자동생성
+	@Override
+	public Code selectLatestCodeNo(String groupCode) throws Exception {
+		// TODO Auto-generated method stub
+		return sqlSession.selectOne("CodeMapper.selectLatestCodeNo", groupCode);
+	}
+
+	//코드 삭제N/복구Y
+	@Override
+	public int updateCodeUsageStatus(Code code) throws Exception {
+		// TODO Auto-generated method stub
+		return sqlSession.update("CodeMapper.updateCodeUsageStatus", code);
 	}
 
 }
