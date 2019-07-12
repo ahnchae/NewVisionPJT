@@ -27,9 +27,9 @@ public class CodeDaoImplTest{
 	private CodeDAO codeDAO;
 	
 	//그룹코드리스트 전체 가져오기
-	@Test
+	//@Test
 	public void selectGroupCodeListTest() throws Exception {
-		List<Code> list = codeDAO.selectGroupCode();
+		List<Code> list = codeDAO.selectGroupCodeList(null);
 		for(Code code : list) {
 			System.out.println(code);
 		}

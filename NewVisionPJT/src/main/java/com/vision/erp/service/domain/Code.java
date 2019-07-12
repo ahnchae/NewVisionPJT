@@ -43,8 +43,9 @@ public class Code {
 	public String getGroupCodeName() {
 		return groupCodeName;
 	}
-	public void setGroupCodeName(String groupCodeName) {
+	public Code setGroupCodeName(String groupCodeName) {
 		this.groupCodeName = groupCodeName;
+		return this;
 	}
 	public String getCodeNo() {
 		return codeNo;

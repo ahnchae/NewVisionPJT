@@ -25,7 +25,7 @@ import com.vision.erp.service.productionmanagement.codms.impl.ProductionManageme
 
 public class ProductManagementDAOImplcodmsTest{
 
-	@Resource(name = "productManagementDAOImplcodms")
+	@Resource(name = "productionManagementDAOImplcodms")
 	private ProductionManagementDAOImplcodms codmsDAO;
 	
 	//[지점]주문요청-주문서등록
@@ -60,7 +60,7 @@ public class ProductManagementDAOImplcodmsTest{
 	//@Test
 	public void selectOrderFromBranchTest() throws Exception{
 		Search search = new Search();
-		List<OrderFromBranch> list = codmsDAO.selectOrderFromBranch(search);
+		List<OrderFromBranch> list = codmsDAO.selectOrderFromBranchList(search);
 		for(OrderFromBranch ofb : list) {
 			System.out.println(ofb);
 		}
@@ -82,7 +82,7 @@ public class ProductManagementDAOImplcodmsTest{
 	public void selectOrderFromBranchProduct() throws Exception {
 		OrderFromBranch ofb = new OrderFromBranch("1001", "400", "b1003", "1111/11/11");
 		ofb.setOrderFromBranchNo("10005");
-		int i = codmsDAO.selectOrderFromBranchProduct(ofb);
+		int i = codmsDAO.selectOrderFromBranchProduct(ofb.getOrderFromBranchNo());
 		System.out.println("출하대기인 상품개수 : "+i);
 	}
 	

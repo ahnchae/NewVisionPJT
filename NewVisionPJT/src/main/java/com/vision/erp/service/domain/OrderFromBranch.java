@@ -13,6 +13,7 @@ public class OrderFromBranch {
 	private String branchName;
 	private String branchNo;
 	private String orderDate;
+	private String accountNo;
 	private List<OrderFromBranchProduct> orderFromBranchProductList;
 	
 	//constructor
@@ -119,13 +120,21 @@ public class OrderFromBranch {
 		this.orderDate = orderDate;
 	}
 
+	public String getAccountNo() {
+		return accountNo;
+	}
+
+	public void setAccountNo(String accountNo) {
+		this.accountNo = accountNo;
+	}
+
 	@Override
 	public String toString() {
 		return "OrderFromBranch [statementNo=" + statementNo + ", orderFromBranchNo=" + orderFromBranchNo
 				+ ", orderFromBranchStatusCodeNo=" + orderFromBranchStatusCodeNo + ", orderFromBranchStatusCodeName="
 				+ orderFromBranchStatusCodeName + ", orderFromBranchTotalAmount=" + orderFromBranchTotalAmount
-				+ ", branchName=" + branchName + ", branchNo=" + branchNo + ", orderDate=" + orderDate
-				+ ", orderFromBranchProductList=" + orderFromBranchProductList + "]";
+				+ ", branchName=" + branchName + ", branchNo=" + branchNo + ", orderDate=" + orderDate + ", accountNo="
+				+ accountNo + ", orderFromBranchProductList=" + orderFromBranchProductList + "]";
 	}
 
 }
