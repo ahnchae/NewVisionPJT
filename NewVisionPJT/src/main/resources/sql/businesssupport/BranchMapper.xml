@@ -22,6 +22,11 @@
 	</resultMap>
 	
 	<insert 	id="insertBranch"	parameterType="branch" >
+	
+		<selectKey	keyProperty="branchNo"	resultType="string"	order="AFTER">
+			SELECT	'b'||SEQ_BRANCH_NO.CURRVAL	FROM dual
+		</selectKey>
+		
 	 	INSERT
 		INTO branch( 
 				BRANCH_NO , 
@@ -128,24 +133,29 @@
 		ORDER BY BRANCH_REG_DATE DESC		
 	 </select>
 	 
-	 <select id="getTotalCount" parameterType="search" resultType="int">
+	 <select id="selectTotalCount" parameterType="search" resultType="int">
 	 	SELECT COUNT(*)
-	 	FROM ( SELECT BRANCH_NO, BRANCH_NAME, LOCAL_CODE_NO
-	 			FROM branch	 			
+	 	FROM ( SELECT 
+		 			BRANCH_NO, 
+		 			BRANCH_NAME, 
+		 			LOCAL_CODE_NO
+		 		FROM branch	 			
 	 			<if test="searchCondition != null">
 	 				<where>
-	 					<if test="searchCondition == 0 and searchKeyword != '' "> 
-							BRANCH_NO = #{searchKeyword}
-						</if>
-						<if test="searchCondition == 1 and searchKeyword != '' "> 
-							BRANCH_NAME LIKE '%'||#{searchKeyword}||'%'
-						</if>
-						<if test="searchCondition == 2 and searchKeyword != '' "> 
-							LOCAL_CODE_NO = #{searchKeyword}
-						</if> 
+	 					<choose>	 					
+		 					<when test="searchCondition == 0 and searchKeyword != '' "> 
+								BRANCH_NO = #{searchKeyword}
+							</when>
+							<when test="searchCondition == 1 and searchKeyword != '' "> 
+								BRANCH_NAME LIKE ('%'||#{searchKeyword}||'%')
+							</when>
+							<otherwise> 
+								LOCAL_CODE_NO = #{searchKeyword}
+							</otherwise> 
+						</choose>
 	 				</where>
 	 			</if> ) countTable
 	 				
-	 </select>	 
+	 </select>	 	 
 
 </mapper>

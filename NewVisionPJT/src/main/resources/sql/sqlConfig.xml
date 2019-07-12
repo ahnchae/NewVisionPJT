@@ -37,6 +37,7 @@
   			<typeAlias type="com.vision.erp.service.domain.WorkAttitudeCode" alias="workAttitudeCode"/>
   			<typeAlias type="com.vision.erp.service.domain.Department" alias="department"/>
   			<typeAlias type="com.vision.erp.service.domain.Approver" alias="approver"/>
+  			<typeAlias type="com.vision.erp.service.domain.NoticeHeader" alias="noticeHeader"/>
   			<typeAlias type="com.vision.erp.common.Search" alias="search"/>
   		</typeAliases>
   		

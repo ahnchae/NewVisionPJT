@@ -1,49 +1,53 @@
 package com.vision.erp.service.branch.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
-import com.vision.erp.common.Search;
 import com.vision.erp.service.branch.BranchDAO;
-import com.vision.erp.service.domain.Branch;
+import com.vision.erp.service.domain.BranchDailySales;
+import com.vision.erp.service.domain.SalesMenu;
+import com.vision.erp.service.domain.SalesProduct;
 
 @Repository("branchDAOImpl")
-public class BranchDAOImpl implements BranchDAO {
+public class BranchDAOImpl implements BranchDAO{
 	
 	@Resource(name="sqlSession")
-	private SqlSession sqlsession;
+	private SqlSession sqlSession;
 
 	@Override
-	public void insertBranch(Branch branch) throws Exception {
-		sqlsession.insert("BranchMapper.insertBranch", branch);				
+	public void insertDailySales(SalesProduct salesProduct) throws Exception {
+		sqlSession.insert("SalesProductMapper.insertSalesProduct", salesProduct);
+		System.out.println("salesNumbering »Æ¿Œ : "+salesProduct.getSalesNumbering());
 	}
 
 	@Override
-	public Branch selectBranchDetail(String branchNo) throws Exception {
-		System.out.println("pppppppp");
-		return sqlsession.selectOne("BranchMapper.selectBranchDetail",branchNo);
+	public List<SalesProduct> selectDailySalesDetail(String branchNo, String salesDate) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("branchNo", branchNo);
+		map.put("salesDate", salesDate);
+		return sqlSession.selectList("SalesProductMapper.selectDailySalesDetail", map);
 	}
 
 	@Override
-	public void updateBranchUsageStatus(String branchNo) throws Exception {
-		sqlsession.update("BranchMapper.updateBranchUsageCode", branchNo);
+	public List<BranchDailySales> selectDailySalesList(String branchNo) throws Exception {
+		return sqlSession.selectList("SalesProductMapper.selectBranchDailySalesList", branchNo);
 	}
 
 	@Override
-	public void updateBranch(String branchNo) throws Exception {
-		sqlsession.update("BranchMapper.updateBranch", branchNo);		
+	public void updateSalesProduct(SalesProduct salesProduct) throws Exception {
+		sqlSession.update("SalesProductMapper", salesProduct);
 	}
 
 	@Override
-	public List<Branch> selectBranchList(Search saerch) throws Exception {
-		System.out.println("ooooooo");
-		return sqlsession.selectList("BranchMapper.selectBranchList");
+	public List<SalesMenu> selectSalesMenuList() throws Exception {
+		return sqlSession.selectList("SalesMenuMapper");
 	}
+
 	
-	
-
 }

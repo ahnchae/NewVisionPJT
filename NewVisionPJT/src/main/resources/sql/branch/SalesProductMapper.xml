@@ -23,6 +23,11 @@
 	</resultMap>
 	
 	<insert 	id="insertSalesProduct"		parameterType="salesProduct" >
+	
+		<selectKey	keyProperty="salesNumbering"	resultType="string"	order="AFTER">
+			SELECT	SEQ_SALES_PRODUCT_NUMBERING.CURRVAL	FROM dual
+		</selectKey>
+	
 	 	INSERT
 		INTO sales_product
 		( 
@@ -75,10 +80,10 @@
 	 </update>
 	 
 	 <select id="selectBranchDailySalesList"	parameterType="string"	resultMap="branchDailySalesSelectMap">
-	 	SELECT	SUM(SALES_AMOUNT) DAILY_TOTAL_AMOUNT, SALES_DATE
+	 	SELECT	BRANCH_NO, SUM(SALES_AMOUNT) DAILY_TOTAL_AMOUNT, SALES_DATE
 	 	FROM	SALES_PRODUCT
 		WHERE	BRANCH_NO = #{value}
-		GROUP BY SALES_DATE
+		GROUP BY BRANCH_NO, SALES_DATE
 		ORDER BY SALES_DATE DESC
 	 </select>	 	 
 

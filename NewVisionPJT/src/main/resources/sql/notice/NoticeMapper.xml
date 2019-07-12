@@ -19,7 +19,18 @@
 		<result property="noticeStatusCodeName" column="RECODE_CODE_NAME" jdbcType="VARCHAR"/>
 	</resultMap>
 	
+	<resultMap id="noticeHeaderSelectMap" type="noticeHeader">
+		<result property="headerCodeNo" column="HEADER_CODE_NO" jdbcType="VARCHAR"/>
+		<result property="headerCodeName" column="HEADER_CODE_NAME" jdbcType="VARCHAR"/>
+	</resultMap>
+		
+	
 	<insert 	id="insertNotice"	parameterType="notice" >
+	
+		<selectKey	keyProperty="noticeNo"	resultType="string"	order="AFTER">
+			SELECT	SEQ_NOTICE_NO.CURRVAL	FROM dual
+		</selectKey>
+	
 	 	INSERT
 		INTO notice( 
 				NOTICE_NO , 
@@ -37,8 +48,8 @@
 			#{noticeTitle} , 			 
 			#{content} , 
 			#{readAuthority}, 
-			#{viewCount}, 
-			#{noticeStatusCodeName})
+			'0', 
+			'01')
 	 </insert>
 	 
 	 <select id="selectNoticeDetail"	parameterType="string"	resultMap="noticeSelectMap">
@@ -58,13 +69,20 @@
 	 	AND		notice.NOTICE_NO = #{value}	 	
 	 </select>
 	 
+	 <select id="selectHeaderNameList"	resultMap="noticeHeaderSelectMap">
+	 	SELECT CODE_NO HEADER_CODE_NO, CODE_NAME HEADER_CODE_NAME
+		FROM CODE
+		WHERE CODE.GROUP_CODE = 'headHorse'
+		ORDER BY HEADER_CODE_NO ASC
+	 </select>
+	 
 	 <update id="updateNotice" parameterType="notice">
 	 	UPDATE notice
 	 	<set>
 			EMPLOYEE_NO = #{employeeNo},
 			NOTICE_TITLE = #{noticeTitle}, 
 			NOTICE_CONTENTS = #{content}, 
-			READ_AUTHORITY = #{departCodeName}
+			READ_AUTHORITY = #{readAuthority}
 	 	</set>
 	 	WHERE	NOTICE_NO = #{noticeNo}	 
 	 </update>
@@ -85,9 +103,6 @@
 	 	WHERE	NOTICE_NO = #{noticeNo}
 	 </update>
 	 
-	 <select id="selectHeaderNameList">
-	 </select>
-	 
 	 <select id="selectNoticeList" parameterType="search" resultMap="noticeSelectMap">	 
 	 	SELECT
 	 			notice.NOTICE_NO , 
@@ -103,13 +118,13 @@
 					<if test="searchCondition != null">
 						<choose>
 							<when test="searchCondition == 0 and searchKeyword != '' ">	 										 
-								notice.NOTICE_TITLE LIKE '%'||#{searchKeyword}||'%'
+								AND	notice.NOTICE_TITLE LIKE '%'||#{searchKeyword}||'%'
 							</when>
 							<when test="searchCondition == 1 and searchKeyword != '' ">	 										
-								human_resource_card.EMPLOYEE_NAME LIKE '%'||#{searchKeyword}||'%'
+								AND	human_resource_card.EMPLOYEE_NAME LIKE '%'||#{searchKeyword}||'%'
 							</when>
 							<otherwise>
-								notice.USAGE_STATUS_CODE = #{searchKeyword}
+								AND	notice.USAGE_STATUS_CODE = #{searchKeyword}
 							</otherwise>
 						</choose>
 					</if>	 										
@@ -117,7 +132,7 @@
 		ORDER BY notice.NOTICE_REG_DATE DESC
 	 </select>
 	 
-	 <select id="getTotalCount" parameterType="search" resultType="int">
+	 <select id="selectTotalCount" parameterType="search" resultType="int">
 	 	SELECT COUNT(*)
 	 	FROM ( SELECT 
 					notice.NOTICE_REG_DATE , 
@@ -128,15 +143,15 @@
 	 					notice.EMPLOYEE_NO = human_resource_card.EMPLOYEE_NO
 	 					<if test="searchCondition != null">
 		 					<choose>
-							<when test="searchCondition == 0 and searchKeyword != '' ">	 										 
-								notice.NOTICE_TITLE LIKE '%'||#{searchKeyword}||'%'
-							</when>
-							<when test="searchCondition == 1 and searchKeyword != '' ">	 										
-								human_resource_card.EMPLOYEE_NAME LIKE '%'||#{searchKeyword}||'%'
-							</when>
-							<otherwise>
-								notice.USAGE_STATUS_CODE = #{searchKeyword}
-							</otherwise>
+								<when test="searchCondition == 0 and searchKeyword != '' ">	 										 
+									AND	notice.NOTICE_TITLE LIKE ('%'||#{searchKeyword}||'%')
+								</when>
+								<when test="searchCondition == 1 and searchKeyword != '' ">	 										
+									AND	human_resource_card.EMPLOYEE_NAME LIKE ('%'||#{searchKeyword}||'%')
+								</when>
+								<otherwise>
+									AND	notice.USAGE_STATUS_CODE = #{searchKeyword}
+								</otherwise>
 							</choose>
 						</if> 
 	 				</where> ) countTable

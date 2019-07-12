@@ -23,7 +23,7 @@
 			#{menuPrice} )
 	 </insert>
 	 
-	 <select id="selectMenuList">
+	 <select id="selectMenuList"	resultMap="slaesMenuSelectMap">
 	 	SELECT	MENU_NO,
 				MENU_NAME,
 				MENU_PRICE
