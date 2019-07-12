@@ -14,6 +14,7 @@ import com.vision.erp.service.domain.Account;
 import com.vision.erp.service.domain.Appointment;
 import com.vision.erp.service.domain.Commute;
 import com.vision.erp.service.domain.Department;
+import com.vision.erp.service.domain.DutyHours;
 import com.vision.erp.service.domain.HumanResourceCard;
 import com.vision.erp.service.domain.SimpleHumanResourceCard;
 import com.vision.erp.service.domain.WorkAttitude;
@@ -42,6 +43,7 @@ public class HumanResourceCardTest{
 	private WorkAttitudeCode workAttitudeCode;
 	private Department department;
 	private Commute commute;
+	private DutyHours dutyHours;
 	
 	//@Test
 	public void testSelectHumanResourceCardList() throws Exception {
@@ -66,26 +68,26 @@ public class HumanResourceCardTest{
 		account = new Account();
 		
 		//humanResourceCard.setAccount(account);
-		humanResourceCard.setAddress("서울특별시 관악구 봉천");
+		humanResourceCard.setAddress("");
 		humanResourceCard.setContractFile("");
 		humanResourceCard.setDepartCodeNo("01");
-		humanResourceCard.setDetailAddress("푸르빌2차아파트 107동 803호");
+		humanResourceCard.setDetailAddress("");
 		humanResourceCard.setEmployeeEmail("qhdqhdekd261@gmail.com");
-		humanResourceCard.setEmployeeName("신민섭");
+		humanResourceCard.setEmployeeName("");
 		humanResourceCard.setEmployeePhone("010-2234-5566");
 		humanResourceCard.setEmployeeTel("02-8897-2441");
 		humanResourceCard.setJoinDate("2017/02/05");
 		humanResourceCard.setProfileImage("");
 		humanResourceCard.setRankCodeNo("03");
 		humanResourceCard.setResignation("N");
-		humanResourceCard.setRefer("관심 필요");
+		humanResourceCard.setRefer("");
 		humanResourceCard.setSignatureImage("");
 		humanResourceCard.setSsn("930424-1120394");
 		humanResourceCard.setWage("13000");
 		humanResourceCard.setZipCode("08790");
 		
 		//Insert
-		humanResourceDAO.insertHumanResource(humanResourceCard);
+		humanResourceDAO.insertHumanResourceCard(humanResourceCard);
 		
 		//Select List
 		search = new Search();
@@ -103,7 +105,7 @@ public class HumanResourceCardTest{
 	public void testSelectSimpleHumanResourceCardByEmployeeNo() throws Exception{
 		
 		simpleHumanResourceCard = 
-				(SimpleHumanResourceCard)humanResourceDAO.selectSimpleHumanResourceCardByEmployeeNo(1001);
+				(SimpleHumanResourceCard)humanResourceDAO.selectSimpleHumanResourceCardByEmployeeNo("1001");
 		
 		System.out.println(simpleHumanResourceCard);
 		
@@ -114,9 +116,9 @@ public class HumanResourceCardTest{
 		
 		humanResourceCard = new HumanResourceCard();
 		humanResourceCard = 
-					(HumanResourceCard)humanResourceDAO.selectHumanResourceCardDetailByEmployeeNo(1000);
+					(HumanResourceCard)humanResourceDAO.selectHumanResourceCardDetailByEmployeeNo("1001");
 		
-		humanResourceCard.setEmployeeName("박경주");
+		humanResourceCard.setEmployeeName("");
 		
 		//System.out.println("Test :: "+humanResourceCard);
 		humanResourceDAO.updateHumanResourceCard(humanResourceCard);
@@ -127,7 +129,7 @@ public class HumanResourceCardTest{
 	public void testInsertAppointment() throws Exception{
 		
 		humanResourceCard = 
-				(HumanResourceCard)humanResourceDAO.selectHumanResourceCardDetailByEmployeeNo(1001);
+				(HumanResourceCard)humanResourceDAO.selectHumanResourceCardDetailByEmployeeNo("1001");
 		
 		appointment = new Appointment();
 		appointment.setAppointDate("2019/02/03");
@@ -137,7 +139,7 @@ public class HumanResourceCardTest{
 		appointment.setEmployeeNo(humanResourceCard.getEmployeeNo());
 		appointment.setPreDepartCodeNo(humanResourceCard.getDepartCodeNo());
 		appointment.setPreRankCodeNo(humanResourceCard.getRankCodeNo());
-		appointment.setReference("내용없음");
+		appointment.setReference("");
 		
 		humanResourceDAO.insertAppointment(appointment);
 		
@@ -175,14 +177,14 @@ public class HumanResourceCardTest{
 		appointment = new Appointment();
 		appointment.setAppointDepartCodeNo("04");
 		
-		humanResourceDAO.updateAppointmentStatus(21, "01");
+		humanResourceDAO.updateAppointmentStatus("21", "01");
 	}
 	
 	//@Test
 	public void testInsertWorkAttitudeCode() throws Exception{
 		
 		workAttitudeCode = new WorkAttitudeCode();
-		workAttitudeCode.setWorkAttitudeCodeName("테스");
+		workAttitudeCode.setWorkAttitudeCodeName("�����ٷ�");
 		workAttitudeCode.setCommuteApplyCode("02");
 		workAttitudeCode.setWorkType("01");
 		workAttitudeCode.setWorkDayOfWeek("02");
@@ -198,7 +200,7 @@ public class HumanResourceCardTest{
 		
 		workAttitudeCode = new WorkAttitudeCode();
 		workAttitudeCode.setWorkAttitudeCodeNo("100");
-		workAttitudeCode.setWorkAttitudeCodeName("소정근로");
+		workAttitudeCode.setWorkAttitudeCodeName("�����ٷ�");
 		workAttitudeCode.setCommuteApplyCode("02");
 		workAttitudeCode.setWorkType("01");
 		workAttitudeCode.setWorkDayOfWeek("02");
@@ -214,7 +216,7 @@ public class HumanResourceCardTest{
 	public void testSelectWorkAttitudeCodeList() throws Exception{
 		
 		search = new Search();
-		search.setSearchKeyword("소정");
+		search.setSearchKeyword("��");
 		
 		List<WorkAttitudeCode> list = humanResourceDAO.selectWorkAttitudeCodeList(search);
 		
@@ -227,7 +229,7 @@ public class HumanResourceCardTest{
 	//@Test
 	public void testUpdateWorkAttitudeCodeUsageStatus() throws Exception{
 		
-		humanResourceDAO.updateWorkAttitudeCodeUsageStatus(100, "01");		
+		humanResourceDAO.updateWorkAttitudeCodeUsageStatus("100", "01");		
 	}
 	
 	//@Test
@@ -249,7 +251,7 @@ public class HumanResourceCardTest{
 	public void testSelectWorkAttitudeList() throws Exception{
 		
 		search = new Search();
-		search.setSearchKeyword("박경");
+		search.setSearchKeyword("");
 		
 		List<WorkAttitude> list = humanResourceDAO.selectWorkAttitudeList(search);
 		
@@ -286,7 +288,7 @@ public class HumanResourceCardTest{
 		
 	}
 	
-	@Test
+	//@Test
 	public void testUpdateCommuteForLeaveWorkTime() throws Exception{
 		
 		commute = new Commute();
@@ -295,6 +297,33 @@ public class HumanResourceCardTest{
 		commute.setLeaveWorkTime("2019/05/09 18:50:30");
 		
 		humanResourceDAO.updateCommuteForLeaveWorkTime(commute);
+		
+	}
+	
+	//@Test
+	public void testInsertDutyHours() throws Exception{
+		
+		dutyHours = new DutyHours();
+		dutyHours.setEmployeeNo("1001");
+		dutyHours.setRegularWorkTime("540");
+		dutyHours.setExtendWorkTime("50");
+		dutyHours.setWorkDate("2019/05/07");
+		
+		humanResourceDAO.insertDutyHours(dutyHours);
+	}
+	
+	//@Test
+	public void testSelectDepartmentList() throws Exception{
+		
+		search = new Search();
+		search.setSearchCondition("02");
+		
+		List<Department> list = humanResourceDAO.selectDepartmentList(search);
+		
+		for(int i = 0; i<list.size(); i++) {
+			department = list.get(i);
+			System.out.println(department);
+		}
 		
 	}
 

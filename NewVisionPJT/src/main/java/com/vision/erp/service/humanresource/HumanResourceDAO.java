@@ -14,13 +14,13 @@ import com.vision.erp.service.domain.WorkAttitudeCode;
 
 public interface HumanResourceDAO {
 
-	public void insertHumanResource(HumanResourceCard humanResourceCard) throws Exception;
+	public void insertHumanResourceCard(HumanResourceCard humanResourceCard) throws Exception;
 	
 	public List<HumanResourceCard> selectHumanResourceCardList(Search search) throws Exception;
 	
-	public HumanResourceCard selectHumanResourceCardDetailByEmployeeNo(int employeeNo) throws Exception;
+	public HumanResourceCard selectHumanResourceCardDetailByEmployeeNo(String employeeNo) throws Exception;
 	
-	public SimpleHumanResourceCard selectSimpleHumanResourceCardByEmployeeNo(int employeeNo) throws Exception;
+	public SimpleHumanResourceCard selectSimpleHumanResourceCardByEmployeeNo(String employeeNo) throws Exception;
 	
 	public List<SimpleHumanResourceCard> selectSimpleHumanResourceCardList(Search search) throws Exception;
 	
@@ -32,7 +32,7 @@ public interface HumanResourceDAO {
 	
 	public void updateWorkAttitude(WorkAttitude workAttitude) throws Exception;
 	
-	public void updateWorkAttitudeUsageStatus(int workAttitudeNo, String usageStatus) throws Exception;
+	public void updateWorkAttitudeUsageStatus(String workAttitudeNo, String usageStatus) throws Exception;
 	
 	public void insertWorkAttitudeCode(WorkAttitudeCode workAttitudeCode) throws Exception;
 	
@@ -40,7 +40,7 @@ public interface HumanResourceDAO {
 	
 	public void updateWorkAttitudeCode(WorkAttitudeCode workAttitudeCode) throws Exception;
 	
-	public void updateWorkAttitudeCodeUsageStatus(int workAttitudeCodeNo, String usageStatus) throws Exception;
+	public void updateWorkAttitudeCodeUsageStatus(String workAttitudeCodeNo, String usageStatus) throws Exception;
 	
 	public void insertAppointment(Appointment appointment) throws Exception;
 	
@@ -50,7 +50,7 @@ public interface HumanResourceDAO {
 	
 	public void updateAppointment(Appointment appointment) throws Exception;
 	
-	public void updateAppointmentStatus(int appointmentNo, String status) throws Exception;
+	public void updateAppointmentStatus(String appointmentNo, String status) throws Exception;
 	
 	public void insertDepartment(Department department) throws Exception;
 	
@@ -58,9 +58,9 @@ public interface HumanResourceDAO {
 	
 	public void updateDepartment(Department department) throws Exception;
 	
-	public void updateDepartmentUsageStatus(int departCodeNo, String status) throws Exception;
+	public void updateDepartmentUsageStatus(String departCodeNo, String status) throws Exception;
 	
-	public List<Commute> selectCommuteList(int employeeNo) throws Exception;
+	public List<Commute> selectCommuteList(String employeeNo) throws Exception;
 	
 	public void insertCommute(Commute commute) throws Exception;
 	
@@ -68,6 +68,6 @@ public interface HumanResourceDAO {
 	
 	public void insertDutyHours(DutyHours dutyHours) throws Exception;
 	
-	public String selectSignatureImageByEmployeeNo(int employeeNo) throws Exception;
+	public String selectSignatureImageByEmployeeNo(String employeeNo) throws Exception;
 	
 }
